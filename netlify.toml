@@ -1,0 +1,75 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[dev]
+  command = "npm run dev"
+  port = 8888
+  targetPort = 5174
+  autoLaunch = false
+
+# ─── API Redirect Rules ──────────────────────────────
+# Netlify processes redirects top-to-bottom, first match wins.
+# Specific path-parameter routes MUST come before broader matches.
+
+# Auth
+[[redirects]]
+  from = "/api/auth/me"
+  to = "/.netlify/functions/auth-me"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/sync"
+  to = "/.netlify/functions/auth-sync"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/google"
+  to = "/.netlify/functions/auth-google"
+  status = 200
+
+# Projects — single project (must precede /api/projects)
+[[redirects]]
+  from = "/api/projects/:projectId"
+  to = "/.netlify/functions/projects-get?id=:projectId"
+  status = 200
+
+# Projects — list / create
+[[redirects]]
+  from = "/api/projects"
+  to = "/.netlify/functions/projects"
+  status = 200
+
+# Admin — update a specific project
+[[redirects]]
+  from = "/api/admin/projects/:projectId"
+  to = "/.netlify/functions/admin-update-stage?projectId=:projectId"
+  status = 200
+
+# Admin — list / filter projects
+[[redirects]]
+  from = "/api/admin/projects"
+  to = "/.netlify/functions/admin-projects"
+  status = 200
+
+# Contact — request update
+[[redirects]]
+  from = "/api/contact/request-update"
+  to = "/.netlify/functions/contact-request-update"
+  status = 200
+
+# SPA fallback — disabled in dev to avoid intercepting assets
+# [[redirects]]
+#   from = "/*"
+#   to = "/index.html"
+#   status = 200
+
+# ─── Security Headers ────────────────────────────────
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
