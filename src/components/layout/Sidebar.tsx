@@ -167,8 +167,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </div>
           <button
-            onClick={() => logout()}
-            className="flex w-full items-center justify-between group py-2 text-[10px] font-mono uppercase tracking-widest text-zinc-600 hover:text-accent transition-colors"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              logout();
+            }}
+            className="flex w-full items-center justify-between group py-2 text-[10px] font-mono uppercase tracking-widest text-zinc-600 hover:text-accent transition-colors disabled:opacity-50"
           >
             <span className="flex items-center gap-2">
               <LogOut size={12} className="group-hover:animate-pulse" />

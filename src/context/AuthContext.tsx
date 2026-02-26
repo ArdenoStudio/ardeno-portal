@@ -112,8 +112,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // 1. Initial hydrate
-    const lock = localStorage.getItem('_portal_logged_out');
-    if (lock === '1') {
+    // Check for hard logout lock first
+    if (localStorage.getItem('_portal_logged_out') === '1') {
       console.log('[AuthContext] Logout lock active. Skipping initial session check.');
       setIsLoading(false);
     } else {
@@ -144,34 +144,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Sign out ───────────────────────────────────────
   const logout = useCallback(async () => {
-    console.log('[AuthContext] Starting robust logout sequence...');
+    console.log('[AuthContext] Starting INSTANT logout sequence...');
 
-    // Set lock immediately
+    // 1. Set lock immediately so ANY re-renders or hydration calls are blocked
     localStorage.setItem('_portal_logged_out', '1');
 
-    // Clear local state immediately to trigger UI transitions
+    // 2. Wipe state
     setUser(null);
     setSession(null);
     setIsLoading(true);
 
-    try {
-      // Sign out from Supabase (with a timeout to prevent hanging the redirect)
-      await Promise.race([
-        supabase.auth.signOut({ scope: 'global' }),
-        new Promise(r => setTimeout(r, 1500))
-      ]);
-    } catch (err) {
-      console.warn('[AuthContext] signOut call timed out or failed, proceeding with manual wipe.', err);
-    }
-
-    // Definitive storage wipe
+    // 3. Clear storage (this is synchronous and definitive for this tab)
     localStorage.clear();
     sessionStorage.clear();
+    localStorage.setItem('_portal_logged_out', '1'); // Re-set the lock since clear() wiped it
 
-    // Re-set lock because clear() removes it
-    localStorage.setItem('_portal_logged_out', '1');
-
-    // Clear cookies
+    // 4. Clear cookies manually
     const cookies = document.cookie.split(";");
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i];
@@ -180,7 +168,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;`;
     }
 
-    console.log('[AuthContext] Logout complete. Hard redirecting...');
+    // 5. Try server-side logout in the background (we don't wait for it)
+    supabase.auth.signOut({ scope: 'global' }).catch(() => { });
+
+    // 6. Hard redirect with cache-buster. window.location.replace stops the React app.
+    console.log('[AuthContext] Redirecting to login.');
     window.location.replace('/login?logout=1&t=' + Date.now());
   }, []);
 
