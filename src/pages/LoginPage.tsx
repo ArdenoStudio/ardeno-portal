@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
+import { AnimatedArdenoLogo } from "@/components/AnimatedArdenoLogo";
 
 export default function ArdenoLogin() {
   const navigate = useNavigate();
@@ -94,34 +95,6 @@ export default function ArdenoLogin() {
           font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Simplified noise pattern for better performance */
-        .ardeno-root::after {
-          content: '';
-          position: fixed;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-          opacity: 0.025;
-          pointer-events: none;
-          z-index: 100;
-        }
-
-        .ardeno-glow {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -68%);
-          width: 600px;
-          height: 600px;
-          background: radial-gradient(circle, rgba(229,9,20,0.07) 0%, transparent 70%);
-          pointer-events: none;
-          animation: ardenoBreath 8s ease-in-out infinite;
-        }
-
-        @keyframes ardenoBreath {
-          0%, 100% { opacity: 0.7; transform: translate(-50%, -68%) scale(1); }
-          50%       { opacity: 1;   transform: translate(-50%, -68%) scale(1.08); }
-        }
-
         .ardeno-wrap {
           display: flex;
           flex-direction: column;
@@ -129,20 +102,6 @@ export default function ArdenoLogin() {
           gap: 64px;
           position: relative;
           z-index: 1;
-        }
-
-        .ardeno-logo-wrap {
-          width: 80px;
-          height: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .ardeno-logo {
-          width: 80px;
-          height: 80px;
-          display: block;
         }
 
         .ardeno-btn {
@@ -240,14 +199,8 @@ export default function ArdenoLogin() {
         }
       `}</style>
 
-      <div className="ardeno-glow" />
-
       <div className="ardeno-wrap">
-        <div className="ardeno-logo-wrap" style={{ opacity: 0, animation: 'ardenoUp 1s cubic-bezier(.16,1,.3,1) 0.1s forwards' }}>
-          <svg className="ardeno-logo" viewBox="0 0 1500 1500" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#E50914" d="M 1114.464844 1093.320312 L 902.367188 666.722656 C 839.917969 722.578125 784.960938 820.574219 788.027344 900.875 L 852.203125 1027.425781 C 854.507812 1031.96875 858.433594 1035.472656 863.210938 1037.246094 L 1089.253906 1121.335938 C 1106.46875 1127.742188 1122.644531 1109.769531 1114.464844 1093.320312 Z M 733.84375 860.191406 C 733.300781 860.992188 732.796875 861.84375 732.347656 862.757812 L 651.828125 1025.953125 C 649.539062 1030.585938 645.566406 1034.179688 640.71875 1035.984375 L 410.511719 1121.617188 C 393.394531 1127.992188 377.25 1110.242188 385.203125 1093.804688 L 726.917969 387.246094 C 734.253906 372.085938 755.8125 371.960938 763.3125 387.042969 L 895.113281 652.152344 C 822.84375 703.808594 766.253906 776.003906 733.84375 860.191406" />
-          </svg>
-        </div>
+        <AnimatedArdenoLogo />
 
         <button className="ardeno-btn" onClick={handleGoogleLogin} disabled={loading}>
           <div className="ardeno-btn-icon">
