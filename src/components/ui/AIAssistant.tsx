@@ -138,7 +138,7 @@ export function AIAssistant() {
                             overflow: 'hidden',
                             background: '#0e0e10',
                             border: '1px solid rgba(255, 255, 255, 0.08)',
-                            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,51,1,0.08)',
+                            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(229, 9, 20, 0.08)',
                         }}
                     >
                         {/* Header */}

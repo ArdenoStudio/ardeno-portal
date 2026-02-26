@@ -342,7 +342,7 @@ export default function ProjectDetailPage() {
                         className={`flex h-11 w-11 items-center justify-center rounded-none border-2 transition-all duration-700 ${isCompleted
                           ? 'border-accent/40 bg-accent/5 text-accent/60'
                           : isCurrent
-                            ? 'border-accent bg-accent/10 text-accent shadow-[0_0_30px_rgba(255,51,1,0.2)]'
+                            ? 'border-accent bg-accent/10 text-accent shadow-[0_0_30px_rgba(229,9,20,0.2)]'
                             : 'border-white/[0.08] bg-zinc-950 text-zinc-800'
                           }`}
                       >

@@ -135,10 +135,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Sign out ───────────────────────────────────────
   const logout = useCallback(async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-    window.location.href = '/login';
+    try {
+      console.log('[AuthContext] Attempting sign out...');
+      await supabase.auth.signOut();
+
+      // Clear persistence flags
+      (window as any)._lastAuthToken = null;
+
+      // Clear state
+      setUser(null);
+      setSession(null);
+
+      console.log('[AuthContext] Sign out success, redirecting...');
+      // Use window.location.replace for cleaner redirect without history entry
+      window.location.replace('/login');
+    } catch (err) {
+      console.error('[AuthContext] Logout failed:', err);
+      // Fallback redirect anyway
+      window.location.replace('/login');
+    }
   }, []);
 
   return (

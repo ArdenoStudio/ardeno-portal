@@ -290,7 +290,7 @@ function EmptyState() {
       </p>
       <Link
         to="/projects/new"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white hover:shadow-[0_0_25px_rgba(255,51,1,0.3)] transition-shadow"
+        className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white hover:shadow-[0_0_25px_rgba(229,9,20,0.3)] transition-shadow"
       >
         <Plus size={16} />
         Request a Project

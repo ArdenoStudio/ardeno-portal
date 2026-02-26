@@ -41,10 +41,10 @@ export function formatRelative(date: string): string {
 
 export function getStageColor(stage: ProjectStage): string {
   const colors: Record<ProjectStage, string> = {
-    'Discovery & Strategy': 'text-amber-500 bg-amber-500/5 border-amber-500/10',
-    'UX & Wireframing': 'text-fuchsia-500 bg-fuchsia-500/5 border-fuchsia-500/10',
-    'Visual Design': 'text-blue-500 bg-blue-500/5 border-blue-500/10',
-    'Development & Launch': 'text-emerald-500 bg-emerald-500/5 border-emerald-500/10',
+    'Discovery & Strategy': 'text-zinc-400 bg-white/5 border-white/5',
+    'UX & Wireframing': 'text-zinc-400 bg-white/5 border-white/5',
+    'Visual Design': 'text-zinc-400 bg-white/5 border-white/5',
+    'Development & Launch': 'text-zinc-400 bg-white/5 border-white/5',
   };
   return colors[stage];
 }
