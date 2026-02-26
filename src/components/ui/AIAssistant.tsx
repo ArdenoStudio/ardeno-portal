@@ -53,7 +53,8 @@ export function AIAssistant() {
                 ...prev,
                 { role: 'assistant', text: reply, timestamp: new Date() },
             ]);
-        } catch {
+        } catch (err) {
+            console.error('[AIAssistant] Error sending message:', err);
             setMessages((prev) => [
                 ...prev,
                 {
