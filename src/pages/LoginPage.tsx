@@ -14,14 +14,33 @@ export default function ArdenoLogin() {
   const next = params.get("next") || "";
   const isLoggingOut = params.get("logout") === "1";
 
-  // If already logged in, redirect (unless we just logged out)
+  // Perform Janitor logout on mount if requested
   useEffect(() => {
     if (isLoggingOut) {
-      console.log("[LoginPage] Force reset triggered via query param");
+      console.log("[LoginPage] Janitor logout initiated...");
+
+      // 1. Wipe everything local
       localStorage.clear();
       sessionStorage.clear();
-      return;
+      localStorage.setItem('_portal_logged_out', '1'); // Keep the lock for this session
+
+      // 2. Wipe cookies
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;`;
+      }
+
+      // 3. Inform Supabase
+      supabase.auth.signOut({ scope: 'global' }).catch(() => { });
     }
+  }, [isLoggingOut]);
+
+  // If already logged in, redirect (unless we just logged out)
+  useEffect(() => {
+    if (isLoggingOut) return;
 
     if (user) {
       navigate(user.isAdmin ? "/admin" : "/dashboard", { replace: true });
