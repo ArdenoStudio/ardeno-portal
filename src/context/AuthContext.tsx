@@ -53,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Skip if we already synced this specific token successfully
     if (lastTokenRef(sess.access_token)) {
+      setIsLoading(false);
       return;
     }
 
@@ -63,7 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      console.log('[AuthContext] Synchronizing session...');
       const res = await fetch('/api/auth/sync', {
         method: 'POST',
         signal: controller.signal,
@@ -83,11 +83,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log('[AuthContext] Sync success:', portalUser.email);
       } else {
         const errText = await res.text();
-        console.error('[AuthContext] Sync failed (res not ok):', errText);
+        console.error('[AuthContext] Sync failed:', errText);
         setUser(null);
       }
     } catch (err: any) {
-      console.error('[AuthContext] Sync error/timeout:', err.name === 'AbortError' ? 'Timeout' : err);
+      console.error('[AuthContext] Sync error:', err.name === 'AbortError' ? 'Timeout' : err);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -99,24 +99,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
 
     async function handleAuthState(sess: Session | null) {
-      console.log('[AuthContext] Processing auth state change...', { sessionPresent: !!sess });
-      if (mounted) setIsLoading(true); // Ensure loading is true while we sync
+      console.log('[AuthContext] Auth state change...', { sessionPresent: !!sess });
+      if (mounted) setIsLoading(true);
 
       try {
         await syncUser(sess);
       } catch (err: any) {
-        console.error('[AuthContext] Critical auth handler error:', err);
+        console.error('[AuthContext] Handler error:', err);
       } finally {
-        if (mounted) {
-          setIsLoading(false);
-          console.log('[AuthContext] Auth processing complete, isLoading set to false');
-        }
+        if (mounted) setIsLoading(false);
       }
     }
 
-    // 1. Initial hydrate - Skip if we just logged out definitively
-    if (localStorage.getItem('_portal_logged_out') === '1') {
-      console.log('[AuthContext] Logout lock detected. Skipping initialization.');
+    // 1. Initial hydrate
+    const lock = localStorage.getItem('_portal_logged_out');
+    if (lock === '1') {
+      console.log('[AuthContext] Logout lock active. Skipping initial session check.');
       setIsLoading(false);
     } else {
       supabase.auth.getSession().then(({ data: { session: sess } }) => {
@@ -126,11 +124,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 2. Subscribe to changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, sess) => {
-      console.log('[AuthContext] onAuthStateChange:', event);
+      console.log('[AuthContext] event:', event);
 
-      // If we are in a locked state, ignore SIGNED_IN events
-      if (localStorage.getItem('_portal_logged_out') === '1' && event === 'SIGNED_IN') {
-        console.log('[AuthContext] Ignoring SIGNED_IN due to logout lock.');
+      // If locked, ignore inward session re-activations until flag is cleared by LoginPage
+      if (localStorage.getItem('_portal_logged_out') === '1' && (event === 'SIGNED_IN' || !!sess)) {
         return;
       }
 
@@ -147,45 +144,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Sign out ───────────────────────────────────────
   const logout = useCallback(async () => {
+    console.log('[AuthContext] Starting robust logout sequence...');
+
+    // Set lock immediately
+    localStorage.setItem('_portal_logged_out', '1');
+
+    // Clear local state immediately to trigger UI transitions
+    setUser(null);
+    setSession(null);
+    setIsLoading(true);
+
     try {
-      console.log('[AuthContext] Initiating ULTIMATE logout...');
-
-      // 1. Set a persistent lock flag
-      localStorage.setItem('_portal_logged_out', '1');
-
-      // 2. Global sign out to revoke tokens on server
-      await supabase.auth.signOut({ scope: 'global' });
-
-      // 3. Clear all storage to wipe local traces
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Explicitly re-set the lock since clear() wiped it
-      localStorage.setItem('_portal_logged_out', '1');
-
-      // 4. Clear cookies
-      const cookies = document.cookie.split(";");
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i];
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-      }
-
-      // 5. Update local state
-      (window as any)._lastAuthToken = null;
-      setUser(null);
-      setSession(null);
-
-      console.log('[AuthContext] Ultimate logout complete. Redirecting.');
-
-      // 6. Hard redirect with cache-buster
-      window.location.href = '/login?logout=1&t=' + Date.now();
+      // Sign out from Supabase (with a timeout to prevent hanging the redirect)
+      await Promise.race([
+        supabase.auth.signOut({ scope: 'global' }),
+        new Promise(r => setTimeout(r, 1500))
+      ]);
     } catch (err) {
-      console.error('[AuthContext] Ultimate logout failed:', err);
-      localStorage.setItem('_portal_logged_out', '1');
-      window.location.href = '/login?logout=error';
+      console.warn('[AuthContext] signOut call timed out or failed, proceeding with manual wipe.', err);
     }
+
+    // Definitive storage wipe
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Re-set lock because clear() removes it
+    localStorage.setItem('_portal_logged_out', '1');
+
+    // Clear cookies
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;`;
+    }
+
+    console.log('[AuthContext] Logout complete. Hard redirecting...');
+    window.location.replace('/login?logout=1&t=' + Date.now());
   }, []);
 
   return (
