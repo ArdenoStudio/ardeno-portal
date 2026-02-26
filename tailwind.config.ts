@@ -1,0 +1,43 @@
+import type { Config } from 'tailwindcss';
+
+export default {
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Satoshi', 'sans-serif'],
+        display: ['Cabinet Grotesk', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        accent: {
+          DEFAULT: '#ff3301',
+          hover: '#d92b00',
+          glow: 'rgba(255, 51, 1, 0.5)',
+        },
+        surface: {
+          DEFAULT: '#050505',
+          card: 'rgba(10, 10, 12, 0.45)',
+          'card-hover': 'rgba(15, 15, 18, 0.65)',
+          modal: '#0a0a0c',
+        },
+        zinc: {
+          850: '#1f1f22',
+          950: '#09090b',
+        },
+      },
+      animation: {
+        'spin-slow': 'spin 12s linear infinite',
+        float: 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s ease-in-out infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config;
