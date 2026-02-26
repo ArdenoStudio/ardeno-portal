@@ -12,13 +12,21 @@ export default function ArdenoLogin() {
   const [error, setError] = useState<string | null>(null);
 
   const next = params.get("next") || "";
+  const isLoggingOut = params.get("logout") === "1";
 
-  // If already logged in, redirect
+  // If already logged in, redirect (unless we just logged out)
   useEffect(() => {
+    if (isLoggingOut) {
+      console.log("[LoginPage] Force reset triggered via query param");
+      localStorage.clear();
+      sessionStorage.clear();
+      return;
+    }
+
     if (user) {
       navigate(user.isAdmin ? "/admin" : "/dashboard", { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, isLoggingOut]);
 
   // Supabase redirect URL
   const redirectTo = useMemo(() => {

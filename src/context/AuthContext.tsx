@@ -136,33 +136,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ── Sign out ───────────────────────────────────────
   const logout = useCallback(async () => {
     try {
-      console.log('[AuthContext] Initiating definitive logout...');
+      console.log('[AuthContext] Initiating nuclear logout...');
 
-      // 1. Manually clear Supabase local storage to prevent session recovery
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
-          console.log('[AuthContext] Clearing storage key:', key);
-          localStorage.removeItem(key);
-        }
-      });
+      // 1. Global sign out to revoke tokens on server
+      await supabase.auth.signOut({ scope: 'global' });
 
-      // 2. Call Supabase sign out
-      await supabase.auth.signOut();
+      // 2. Clear all storage to wipe local traces
+      localStorage.clear();
+      sessionStorage.clear();
 
-      // 3. Clear in-memory state
+      // 3. Clear cookies
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+
+      // 4. Update local state
       (window as any)._lastAuthToken = null;
       setUser(null);
       setSession(null);
 
-      console.log('[AuthContext] Logout phase complete. Redirecting to login.');
+      console.log('[AuthContext] Storage and cookies cleared. Redirecting.');
 
-      // 4. Use window.location.href for a clean redirect
-      // This ensures we land on the login page with a fresh app state.
-      window.location.href = '/login';
+      // 5. Hard redirect with cache-buster
+      window.location.replace('/login?logout=1&t=' + Date.now());
     } catch (err) {
-      console.error('[AuthContext] Error during logout:', err);
-      // Fallback: Force redirect anyway
-      window.location.href = '/login';
+      console.error('[AuthContext] Nuclear logout failed:', err);
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.replace('/login?logout=error');
     }
   }, []);
 
