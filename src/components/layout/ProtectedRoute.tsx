@@ -6,7 +6,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const location = useLocation();
 
   if (isLoading) return null;
-  if (!user) {
+
+  // Hard check for logout lock
+  if (localStorage.getItem('_portal_logged_out') === '1' || !user) {
     return (
       <Navigate
         to={`/login?next=${encodeURIComponent(location.pathname)}`}
@@ -23,7 +25,8 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   const location = useLocation();
 
   if (isLoading) return null;
-  if (!user) {
+
+  if (localStorage.getItem('_portal_logged_out') === '1' || !user) {
     return (
       <Navigate
         to={`/login?next=${encodeURIComponent(location.pathname)}`}

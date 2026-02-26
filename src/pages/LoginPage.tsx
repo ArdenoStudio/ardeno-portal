@@ -211,6 +211,9 @@ export default function ArdenoLogin() {
     setLoading(true);
     setError(null);
 
+    // Clear the logout lock since we are intentionally logging in
+    localStorage.removeItem("_portal_logged_out");
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },

@@ -114,14 +114,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // 1. Initial hydrate
-    supabase.auth.getSession().then(({ data: { session: sess } }) => {
-      if (mounted) handleAuthState(sess);
-    });
+    // 1. Initial hydrate - Skip if we just logged out definitively
+    if (localStorage.getItem('_portal_logged_out') === '1') {
+      console.log('[AuthContext] Logout lock detected. Skipping initialization.');
+      setIsLoading(false);
+    } else {
+      supabase.auth.getSession().then(({ data: { session: sess } }) => {
+        if (mounted) handleAuthState(sess);
+      });
+    }
 
     // 2. Subscribe to changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, sess) => {
       console.log('[AuthContext] onAuthStateChange:', event);
+
+      // If we are in a locked state, ignore SIGNED_IN events
+      if (localStorage.getItem('_portal_logged_out') === '1' && event === 'SIGNED_IN') {
+        console.log('[AuthContext] Ignoring SIGNED_IN due to logout lock.');
+        return;
+      }
+
       if (mounted && (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED')) {
         handleAuthState(sess);
       }
@@ -136,16 +148,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ── Sign out ───────────────────────────────────────
   const logout = useCallback(async () => {
     try {
-      console.log('[AuthContext] Initiating nuclear logout...');
+      console.log('[AuthContext] Initiating ULTIMATE logout...');
 
-      // 1. Global sign out to revoke tokens on server
+      // 1. Set a persistent lock flag
+      localStorage.setItem('_portal_logged_out', '1');
+
+      // 2. Global sign out to revoke tokens on server
       await supabase.auth.signOut({ scope: 'global' });
 
-      // 2. Clear all storage to wipe local traces
+      // 3. Clear all storage to wipe local traces
       localStorage.clear();
       sessionStorage.clear();
 
-      // 3. Clear cookies
+      // Explicitly re-set the lock since clear() wiped it
+      localStorage.setItem('_portal_logged_out', '1');
+
+      // 4. Clear cookies
       const cookies = document.cookie.split(";");
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i];
@@ -154,20 +172,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
       }
 
-      // 4. Update local state
+      // 5. Update local state
       (window as any)._lastAuthToken = null;
       setUser(null);
       setSession(null);
 
-      console.log('[AuthContext] Storage and cookies cleared. Redirecting.');
+      console.log('[AuthContext] Ultimate logout complete. Redirecting.');
 
-      // 5. Hard redirect with cache-buster
-      window.location.replace('/login?logout=1&t=' + Date.now());
+      // 6. Hard redirect with cache-buster
+      window.location.href = '/login?logout=1&t=' + Date.now();
     } catch (err) {
-      console.error('[AuthContext] Nuclear logout failed:', err);
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.replace('/login?logout=error');
+      console.error('[AuthContext] Ultimate logout failed:', err);
+      localStorage.setItem('_portal_logged_out', '1');
+      window.location.href = '/login?logout=error';
     }
   }, []);
 
