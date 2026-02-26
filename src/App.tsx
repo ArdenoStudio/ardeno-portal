@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { PortalLayout } from '@/components/layout/PortalLayout';
 import { ProtectedRoute, AdminRoute } from '@/components/layout/ProtectedRoute';
 import { ToastProvider } from '@/context/ToastContext';
+import { AIAssistant } from '@/components/ui/AIAssistant';
 import LoginPage from '@/pages/LoginPage';
 import AuthCallback from '@/pages/AuthCallback';
 import DashboardPage from '@/pages/DashboardPage';
@@ -19,7 +20,10 @@ export default function App() {
         <Route
           element={
             <ProtectedRoute>
-              <PortalLayout />
+              <>
+                <PortalLayout />
+                <AIAssistant />
+              </>
             </ProtectedRoute>
           }
         >
