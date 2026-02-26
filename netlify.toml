@@ -59,6 +59,12 @@
   to = "/.netlify/functions/contact-request-update"
   status = 200
 
+# AI Assistant (Aria)
+[[redirects]]
+  from = "/api/ai-assistant"
+  to = "/.netlify/functions/ai-assistant"
+  status = 200
+
 # SPA fallback — disabled in dev to avoid intercepting assets
 # [[redirects]]
 #   from = "/*"
