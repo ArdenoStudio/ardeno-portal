@@ -20,7 +20,7 @@ import {
 import { getDb } from './db/connection';
 
 const GEMINI_API_URL =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
 const SYSTEM_INSTRUCTION = `You are Aria, the AI Project Assistant for Ardeno Studio — a professional creative and digital studio that builds premium websites, apps, branding, and digital experiences.
 

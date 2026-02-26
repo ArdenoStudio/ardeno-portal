@@ -92,13 +92,13 @@ export function AIAssistant() {
                     width: '3.5rem',
                     height: '3.5rem',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #ff3301 0%, #ff6640 100%)',
+                    background: 'linear-gradient(135deg, #E50914 0%, #B20710 100%)',
                     border: 'none',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 8px 32px rgba(255, 51, 1, 0.45)',
+                    boxShadow: '0 8px 32px rgba(229, 9, 20, 0.45)',
                     color: '#fff',
                 }}
             >
@@ -144,7 +144,7 @@ export function AIAssistant() {
                         {/* Header */}
                         <div
                             style={{
-                                background: 'linear-gradient(135deg, #ff3301 0%, #d92b00 100%)',
+                                background: 'linear-gradient(135deg, #E50914 0%, #B20710 100%)',
                                 padding: '0.875rem 1.125rem',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -206,7 +206,7 @@ export function AIAssistant() {
                                             padding: '0.625rem 0.875rem',
                                             borderRadius: msg.role === 'user' ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem',
                                             background: msg.role === 'user'
-                                                ? 'linear-gradient(135deg, #ff3301, #d92b00)'
+                                                ? 'linear-gradient(135deg, #E50914, #B20710)'
                                                 : 'rgba(255, 255, 255, 0.06)',
                                             border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.07)',
                                             color: msg.role === 'user' ? '#fff' : '#d4d4d8',
@@ -243,7 +243,7 @@ export function AIAssistant() {
                                                 key={i}
                                                 animate={{ y: [0, -4, 0] }}
                                                 transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.15 }}
-                                                style={{ width: 6, height: 6, borderRadius: '50%', background: '#ff3301', display: 'inline-block' }}
+                                                style={{ width: 6, height: 6, borderRadius: '50%', background: '#E50914', display: 'inline-block' }}
                                             />
                                         ))}
                                     </div>
@@ -305,7 +305,7 @@ export function AIAssistant() {
                                     width: '2.375rem',
                                     height: '2.375rem',
                                     borderRadius: '0.75rem',
-                                    background: input.trim() ? 'linear-gradient(135deg, #ff3301, #d92b00)' : 'rgba(255,255,255,0.06)',
+                                    background: input.trim() ? 'linear-gradient(135deg, #E50914, #B20710)' : 'rgba(255,255,255,0.06)',
                                     border: 'none',
                                     cursor: input.trim() ? 'pointer' : 'not-allowed',
                                     display: 'flex',

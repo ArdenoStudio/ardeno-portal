@@ -5,21 +5,21 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Satoshi', 'sans-serif'],
-        display: ['Cabinet Grotesk', 'sans-serif'],
+        sans: ['Manrope', 'sans-serif'],
+        display: ['Syne', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
         accent: {
-          DEFAULT: '#ff3301',
-          hover: '#d92b00',
-          glow: 'rgba(255, 51, 1, 0.5)',
+          DEFAULT: '#E50914',
+          hover: '#B20710',
+          glow: 'rgba(229, 9, 20, 0.5)',
         },
         surface: {
-          DEFAULT: '#050505',
+          DEFAULT: '#000000',
           card: 'rgba(10, 10, 12, 0.45)',
           'card-hover': 'rgba(15, 15, 18, 0.65)',
-          modal: '#0a0a0c',
+          modal: '#050505',
         },
         zinc: {
           850: '#1f1f22',
