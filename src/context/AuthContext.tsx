@@ -136,23 +136,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ── Sign out ───────────────────────────────────────
   const logout = useCallback(async () => {
     try {
-      console.log('[AuthContext] Attempting sign out...');
+      console.log('[AuthContext] Initiating definitive logout...');
+
+      // 1. Manually clear Supabase local storage to prevent session recovery
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          console.log('[AuthContext] Clearing storage key:', key);
+          localStorage.removeItem(key);
+        }
+      });
+
+      // 2. Call Supabase sign out
       await supabase.auth.signOut();
 
-      // Clear persistence flags
+      // 3. Clear in-memory state
       (window as any)._lastAuthToken = null;
-
-      // Clear state
       setUser(null);
       setSession(null);
 
-      console.log('[AuthContext] Sign out success, redirecting...');
-      // Use window.location.replace for cleaner redirect without history entry
-      window.location.replace('/login');
+      console.log('[AuthContext] Logout phase complete. Redirecting to login.');
+
+      // 4. Use window.location.href for a clean redirect
+      // This ensures we land on the login page with a fresh app state.
+      window.location.href = '/login';
     } catch (err) {
-      console.error('[AuthContext] Logout failed:', err);
-      // Fallback redirect anyway
-      window.location.replace('/login');
+      console.error('[AuthContext] Error during logout:', err);
+      // Fallback: Force redirect anyway
+      window.location.href = '/login';
     }
   }, []);
 
