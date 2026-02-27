@@ -19,7 +19,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["node"]
   },
-  "include": ["src", "netlify"]
+  "include": ["src", "netlify", "vite.config.ts"]
 }
