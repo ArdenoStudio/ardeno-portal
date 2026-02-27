@@ -24,11 +24,6 @@
   to = "/.netlify/functions/auth-sync"
   status = 200
 
-[[redirects]]
-  from = "/api/auth/google"
-  to = "/.netlify/functions/auth-google"
-  status = 200
-
 # Projects — single project (must precede /api/projects)
 [[redirects]]
   from = "/api/projects/:projectId"
@@ -65,11 +60,11 @@
   to = "/.netlify/functions/ai-assistant"
   status = 200
 
-# SPA fallback — disabled in dev to avoid intercepting assets
-# [[redirects]]
-#   from = "/*"
-#   to = "/index.html"
-#   status = 200
+# SPA fallback — serve index.html for client-side routing (direct links, refresh)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 # ─── Security Headers ────────────────────────────────
 
