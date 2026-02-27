@@ -10,10 +10,10 @@ export function PortalLayout() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen bg-black">
+    <div className="portal-root flex h-screen bg-black overflow-hidden select-none">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex flex-1 flex-col lg:ml-[260px]">
+      <div className="relative z-10 flex flex-1 flex-col lg:ml-[260px] bg-transparent">
         {/* Mobile topbar */}
         <div className="flex items-center justify-between px-4 py-3 lg:hidden border-b border-white/[0.06]">
           <button
@@ -33,11 +33,11 @@ export function PortalLayout() {
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: EASING }}
-              className="min-h-full"
+              initial={{ opacity: 0, scale: 0.99, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 1.01, filter: 'blur(4px)' }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="min-h-full p-4 lg:p-0"
             >
               <Outlet />
             </motion.div>

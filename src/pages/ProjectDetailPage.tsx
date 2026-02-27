@@ -280,7 +280,7 @@ export default function ProjectDetailPage() {
                   <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent/80">{project.industry}</span>
                 </div>
               )}
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-display font-black text-white leading-[0.9] tracking-tighter">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black text-white leading-[0.85] tracking-tighter uppercase italic">
                 {project.project_name}
               </h1>
             </div>
@@ -292,7 +292,7 @@ export default function ProjectDetailPage() {
             </div>
           </div>
           {project.description && (
-            <p className="text-lg text-zinc-500 max-w-2xl font-sans leading-relaxed">
+            <p className="text-xl text-zinc-500 max-w-4xl font-sans leading-relaxed mt-4">
               {project.description}
             </p>
           )}

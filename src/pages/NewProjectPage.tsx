@@ -22,11 +22,12 @@ import { api } from '@/lib/api';
 import type { Project, CreateProjectPayload } from '@/types';
 
 const BUDGET_OPTIONS = [
-  'Under $1,000',
-  '$1,000 - $5,000',
-  '$5,000 - $10,000',
-  '$10,000 - $25,000',
-  '$25,000+',
+  'Under LKR 50,000',
+  'LKR 50,000 – 150,000',
+  'LKR 150,000 – 500,000',
+  'LKR 500,000 – 1,000,000',
+  'LKR 1,000,000+',
+  'Let\'s discuss',
 ];
 
 const stagger = {
@@ -97,33 +98,32 @@ export default function NewProjectPage() {
   // ── Success state ───────────────────────────────────────
   if (success) {
     return (
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#050505] p-6 text-center">
-        {/* Grain Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grain-y.com/images/grain-dark.png')] mix-blend-overlay" />
-
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden portal-root p-6 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-10 flex flex-col items-center"
         >
-          <div className="mb-12 flex h-24 w-24 items-center justify-center border border-white/5 bg-white/[0.02] relative group">
-            <div className="absolute inset-0 border border-accent/20 scale-110 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <CheckCircle2 size={32} className="text-accent" />
+          <div className="mb-12 flex h-24 w-24 items-center justify-center border border-white/[0.08] bg-white/[0.02] relative group rounded-sm overflow-hidden">
+            <div className="absolute inset-0 bg-accent/5 backdrop-blur-xl group-hover:bg-accent/10 transition-colors" />
+            <CheckCircle2 size={32} className="text-accent relative z-10" />
+            <div className="absolute inset-1 border border-white/[0.03] pointer-events-none" />
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center gap-3 justify-center mb-6">
-              <div className="h-px w-8 bg-accent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent/80">Initialization_Success</span>
-              <div className="h-px w-8 bg-accent" />
+              <div className="h-px w-10 bg-accent" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-accent font-bold">Initialization_Success</span>
+              <div className="h-px w-10 bg-accent" />
             </div>
 
-            <h2 className="text-5xl md:text-6xl font-display font-black text-white uppercase tracking-tighter leading-none mb-4">
-              Project_Launched
+            <h2 className="text-6xl md:text-8xl font-display font-black text-white uppercase tracking-tighter leading-[0.85] mb-6">
+              Project<br />
+              <span className="text-white/40 italic">Launched.</span>
             </h2>
 
-            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-[0.3em] max-w-sm leading-relaxed">
+            <p className="text-[11px] font-mono text-zinc-500 uppercase tracking-[0.4em] max-w-sm leading-relaxed mx-auto">
               Architectural pipeline initialized // Strategic review in progress // Operator callback imminent
             </p>
           </div>
@@ -131,11 +131,11 @@ export default function NewProjectPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-16 flex flex-col items-center gap-6"
+            transition={{ delay: 1 }}
+            className="mt-20 flex flex-col items-center gap-8"
           >
-            <div className="h-24 w-px bg-gradient-to-b from-accent to-transparent" />
-            <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest animate-pulse">Redirecting_to_Command_Center...</span>
+            <div className="h-24 w-px bg-gradient-to-b from-accent to-transparent opacity-50" />
+            <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest animate-pulse font-bold">Redirecting_to_Command_Center...</span>
           </motion.div>
         </motion.div>
       </div>
@@ -168,21 +168,21 @@ export default function NewProjectPage() {
         </Link>
       </motion.div>
 
-      {/* Header */}
       <motion.div
         {...revealProps as any}
-        className="mb-20"
+        className="mb-24"
       >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-px w-10 bg-accent" />
-          <span className="text-[11px] font-mono uppercase tracking-[0.4em] text-accent/80">Project_Deployment.v1</span>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="h-px w-12 bg-accent" />
+          <span className="text-[11px] font-mono uppercase tracking-[0.5em] text-accent font-bold">Project_Deployment.v2.4</span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-display font-black text-white tracking-tighter uppercase leading-none mb-6">
-          Architect Your Next Standard
+        <h1 className="text-5xl md:text-8xl lg:text-9xl font-display font-black text-white tracking-tighter uppercase leading-[0.8] mb-10">
+          Architect Your<br />
+          <span className="text-white/40 italic">Next Standard.</span>
         </h1>
 
-        <p className="text-sm text-zinc-500 font-sans max-w-xl leading-relaxed">
+        <p className="text-lg text-zinc-500 font-sans max-w-2xl leading-relaxed">
           Define the blueprint for your upcoming project. Provide architectural constraints, strategic targets, and industrial specs to initialize your pipeline.
         </p>
       </motion.div>

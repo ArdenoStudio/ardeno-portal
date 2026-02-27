@@ -41,19 +41,19 @@ export function formatRelative(date: string): string {
 
 export function getStageColor(stage: ProjectStage): string {
   const colors: Record<ProjectStage, string> = {
-    'Discovery & Strategy': 'text-zinc-400 bg-white/5 border-white/5',
-    'UX & Wireframing': 'text-zinc-400 bg-white/5 border-white/5',
-    'Visual Design': 'text-zinc-400 bg-white/5 border-white/5',
-    'Development & Launch': 'text-zinc-400 bg-white/5 border-white/5',
+    'Discovery & Strategy': 'text-zinc-500 bg-white/[0.02] border-white/5',
+    'UX & Wireframing': 'text-zinc-500 bg-white/[0.02] border-white/5',
+    'Visual Design': 'text-zinc-500 bg-white/[0.02] border-white/5',
+    'Development & Launch': 'text-zinc-500 bg-white/[0.02] border-white/5',
   };
   return colors[stage];
 }
 
 export function getStatusColor(status: ProjectStatus): string {
   const colors: Record<ProjectStatus, string> = {
-    Active: 'text-accent bg-accent/5 border-accent/10',
-    'On Hold': 'text-zinc-600 bg-white/5 border-white/5',
-    Completed: 'text-emerald-500 bg-emerald-500/5 border-emerald-500/10',
+    Active: 'text-accent bg-accent/5 border-accent/20 shadow-[0_0_15px_var(--accent-glow)]',
+    'On Hold': 'text-zinc-600 bg-white/[0.01] border-white/5',
+    Completed: 'text-emerald-500/80 bg-emerald-500/5 border-emerald-500/10',
   };
   return colors[status];
 }

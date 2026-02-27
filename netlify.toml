@@ -60,7 +60,33 @@
   to = "/.netlify/functions/ai-assistant"
   status = 200
 
-# SPA fallback — serve index.html for client-side routing (direct links, refresh)
+# Vite dev assets — pass through (must come before SPA fallback)
+[[redirects]]
+  from = "/src/*"
+  to = "/src/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/@vite/*"
+  to = "/@vite/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/@id/*"
+  to = "/@id/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/node_modules/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+# SPA fallback — after Vite paths so /src/* etc. aren't rewritten to HTML
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -10,14 +10,13 @@ export function StageBadge({ stage, className }: StageBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-3 px-4 py-1.5',
-        'text-[9px] font-mono font-bold uppercase tracking-[0.4em]',
-        'bg-[#080808] border border-white/[0.08] relative group overflow-hidden',
+        'inline-flex items-center gap-2 px-3 py-1',
+        'text-[9px] font-mono font-medium uppercase tracking-[0.3em]',
+        'bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm relative overflow-hidden rounded-sm',
         getStageColor(stage),
         className
       )}
     >
-      <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-current opacity-70" />
       <span className="relative z-10">{stage}</span>
     </span>
   );
@@ -29,17 +28,23 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  const isActive = status === 'Active';
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-3 px-5 py-2',
-        'text-[10px] font-mono font-black uppercase tracking-[0.5em]',
-        'bg-[#050505] border border-white/[0.05] relative',
+        'inline-flex items-center gap-2 px-4 py-1.5',
+        'text-[10px] font-mono font-bold uppercase tracking-[0.4em]',
+        'bg-white/[0.03] border border-white/[0.1] relative overflow-hidden rounded-sm',
         getStatusColor(status),
         className
       )}
     >
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-current" />
+      {isActive && (
+        <span className="relative flex h-1.5 w-1.5 mr-1">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+        </span>
+      )}
       <span className="relative z-10">{status}</span>
     </span>
   );

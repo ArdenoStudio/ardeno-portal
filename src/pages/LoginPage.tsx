@@ -163,9 +163,11 @@ export default function ArdenoLogin() {
         .ardeno-status {
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: center;
+          gap: 10px;
           opacity: 0;
           animation: ardenoUp 1s cubic-bezier(.16,1,.3,1) 0.5s forwards;
+          width: 100%;
         }
 
         .ardeno-dot {
@@ -174,6 +176,7 @@ export default function ArdenoLogin() {
           border-radius: 50%;
           background: #4ade80;
           box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+          animation: ardenoPulse 2s infinite ease-in-out;
         }
 
         .ardeno-error {
@@ -183,6 +186,7 @@ export default function ArdenoLogin() {
           letter-spacing: 0.15em;
           color: #E50914;
           opacity: 0.9;
+          text-align: center;
         }
 
         .ardeno-dot-label {
@@ -191,6 +195,36 @@ export default function ArdenoLogin() {
           text-transform: uppercase;
           color: rgba(255,255,255,0.15);
           font-weight: 400;
+        }
+
+        .ardeno-back-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 48px;
+          padding: 8px 16px;
+          font-size: 9px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.4);
+          text-decoration: none;
+          border: 1px solid rgba(255,255,255,0.08);
+          background: transparent;
+          transition: color 0.2s, border-color 0.2s, background 0.2s;
+          opacity: 0;
+          animation: ardenoUp 1s cubic-bezier(.16,1,.3,1) 0.6s forwards;
+        }
+
+        .ardeno-back-link:hover {
+          color: rgba(255,255,255,0.8);
+          border-color: rgba(255,255,255,0.15);
+          background: rgba(255,255,255,0.03);
+        }
+
+        @keyframes ardenoPulse {
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+          50% { transform: scale(1.4); box-shadow: 0 0 12px 2px rgba(74, 222, 128, 0.6); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
         }
 
         @keyframes ardenoUp {
@@ -222,6 +256,16 @@ export default function ArdenoLogin() {
             <span className="ardeno-dot-label">Encrypted Session · TLS 1.3</span>
           </div>
           {error && <span className="ardeno-error">{error}</span>}
+
+          <a
+            href={import.meta.env.VITE_WEBSITE_URL || 'https://ardenostudio.com'}
+            className="ardeno-back-link"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M9 5H1M1 5L5 1M1 5L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Back to website
+          </a>
         </div>
       </div>
     </div>

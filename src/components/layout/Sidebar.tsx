@@ -48,10 +48,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Logo Section */}
         <div className="flex items-center justify-between px-8 py-10">
           <div>
-            <div className="text-xl font-display font-extrabold tracking-[0.2em] text-white">
+            <div className="text-xl font-display font-extrabold tracking-[0.2em] text-white antialiased">
               ARDENO
             </div>
-            <div className="text-[10px] font-mono tracking-[0.2em] text-zinc-600 uppercase mt-1">
+            <div className="text-caption font-mono tracking-[0.25em] text-zinc-500 uppercase mt-1.5 font-medium">
               v1.5 / Portal
             </div>
           </div>
@@ -68,7 +68,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           <NavLink
             to="/projects/new"
             onClick={onClose}
-            className="flex items-center justify-center gap-2 rounded-none bg-accent/5 border border-accent/20 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.1em] text-accent hover:bg-accent/10 transition-all duration-300"
+            className="flex items-center justify-center gap-2 rounded-md bg-accent/5 border border-accent/20 px-4 py-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent hover:bg-accent/10 transition-all duration-300"
           >
             <Plus size={14} />
             Initialize Project
@@ -76,41 +76,41 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-1">
+        <nav className="flex-1 px-4 space-y-2 mt-4">
           {navItems.map((item) => {
             const isActive =
               location.pathname === item.to ||
               (item.to === '/projects' &&
-                location.pathname.startsWith('/project'));
+                location.pathname.startsWith('/projects/'));
             return (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={onClose}
                 className={cn(
-                  'flex items-center gap-4 px-4 py-3 text-[13px] font-medium transition-all duration-500 group relative',
+                  'flex items-center gap-4 px-5 py-4 text-sm font-body font-medium transition-all duration-500 group relative rounded-md',
                   isActive
-                    ? 'text-white bg-white/[0.03]'
-                    : 'text-zinc-500 hover:text-white hover:bg-white/[0.01]'
+                    ? 'text-white bg-white/[0.05] shadow-[inset_0_0_20px_rgba(255,255,255,0.02)]'
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02]'
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="sidebar-active"
-                    className="absolute left-0 top-0 bottom-0 w-[2px] bg-accent"
+                    className="absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-accent shadow-[0_0_10px_var(--accent-0)]"
                   />
                 )}
-                <item.icon size={18} className={cn(isActive ? 'text-accent' : 'group-hover:text-accent/70')} />
-                <span className="font-display tracking-[0.02em]">{item.label}</span>
+                <item.icon size={16} className={cn('transition-colors', isActive ? 'text-accent' : 'text-zinc-600 group-hover:text-zinc-400')} />
+                <span className="font-sans font-medium tracking-wide">{item.label}</span>
               </NavLink>
             );
           })}
 
           {isAdmin && (
             <>
-              <div className="pt-10 pb-4 px-4">
-                <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-700">
-                  Secure / Admin
+              <div className="pt-12 pb-4 px-5">
+                <div className="text-caption font-mono uppercase tracking-[0.4em] text-zinc-600">
+                  Secure_Linkage
                 </div>
               </div>
               {adminItems.map((item) => {
@@ -120,21 +120,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     key={item.to}
                     to={item.to}
                     onClick={onClose}
-                    className={cn(
-                      'flex items-center gap-4 px-4 py-3 text-[13px] font-medium transition-all duration-500 group relative',
+                  className={cn(
+                    'flex items-center gap-4 px-5 py-4 text-sm font-body font-medium transition-all duration-500 group relative rounded-md',
                       isActive
-                        ? 'text-white bg-white/[0.03]'
-                        : 'text-zinc-500 hover:text-white hover:bg-white/[0.01]'
+                        ? 'text-white bg-white/[0.05]'
+                        : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.02]'
                     )}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="sidebar-active"
-                        className="absolute left-0 top-0 bottom-0 w-[2px] bg-accent"
+                        className="absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-accent shadow-[0_0_10px_var(--accent-0)]"
                       />
                     )}
-                    <item.icon size={18} className={cn(isActive ? 'text-accent' : 'group-hover:text-accent/70')} />
-                    <span className="font-display tracking-[0.02em]">{item.label}</span>
+                    <item.icon size={16} className={cn('transition-colors', isActive ? 'text-accent' : 'text-zinc-600 group-hover:text-zinc-400')} />
+                    <span className="font-sans font-medium tracking-wide">{item.label}</span>
                   </NavLink>
                 );
               })}
@@ -158,10 +158,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <div className="text-[11px] font-bold text-white truncate uppercase tracking-wider">
+              <div className="text-caption font-semibold text-white truncate uppercase tracking-[0.15em] font-body">
                 {user?.name}
               </div>
-              <div className="text-[9px] font-mono text-zinc-600 truncate mt-0.5">
+              <div className="text-caption font-mono text-zinc-500 truncate mt-0.5 text-[10px]">
                 {user?.email}
               </div>
             </div>
@@ -172,7 +172,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               e.preventDefault();
               logout();
             }}
-            className="flex w-full items-center justify-between group py-2 text-[10px] font-mono uppercase tracking-widest text-zinc-600 hover:text-accent transition-colors disabled:opacity-50"
+            className="flex w-full items-center justify-between group py-2 text-caption font-mono uppercase tracking-[0.2em] text-zinc-500 hover:text-accent transition-colors disabled:opacity-50"
           >
             <span className="flex items-center gap-2">
               <LogOut size={12} className="group-hover:animate-pulse" />

@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, FolderKanban, Zap, CalendarCheck, Plus, Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { GlassCard } from '@/components/ui/GlassCard';
+import { Button } from '@/components/ui/Button';
 import { StageBadge, StatusBadge } from '@/components/ui/StatusBadge';
 import { DashboardSkeleton } from '@/components/ui/Skeleton';
 import { EASING } from '@/lib/constants';
@@ -11,6 +12,7 @@ import { formatRelative } from '@/lib/utils';
 import { useApi } from '@/hooks/useApi';
 import { PROJECT_STAGES, STAGE_INDEX, type ProjectStage, type Project } from '@/types';
 import { CopyDebugInfo } from '@/components/ui/CopyDebugInfo';
+
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -22,16 +24,39 @@ function getGreeting(): string {
 const revealProps = {
   initial: { opacity: 0, y: 30, skewY: 1.5 },
   animate: { opacity: 1, y: 0, skewY: 0 },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as any
+  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } as any
 };
 
 const stagger = {
   container: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
   item: {
     initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } as any },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } as any },
   },
 };
+
+// ─── CountUp Component ────────────────────────────────
+function CountUp({ value }: { value: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (value <= 0) return;
+    let start = 0;
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const animate = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const easeOutQuad = (t: number) => t * (2 - t);
+      setCount(Math.floor(easeOutQuad(progress) * value));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return <>{count}</>;
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -70,8 +95,8 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="mx-auto max-w-7xl px-8 py-16">
-        <GlassCard hover={false} className="flex flex-col items-center justify-center py-20 px-8 text-center ring-1 ring-red-500/20">
-          <p className="text-[10px] uppercase tracking-widest text-red-400 mb-2 font-mono">Sync Failure / Error</p>
+        <GlassCard hover={false} className="flex flex-col items-center justify-center py-20 px-8 text-center ring-1 ring-accent/20">
+          <p className="text-[10px] uppercase tracking-widest text-accent mb-2 font-mono">Sync Failure / Error</p>
           <p className="text-xl font-display text-white mb-4">{error}</p>
           <CopyDebugInfo error={error} endpoint="/projects" />
         </GlassCard>
@@ -81,38 +106,40 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-8 py-16">
-      {/* Header - Staggered Slide */}
       <motion.div
         {...revealProps}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16"
+        className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20"
       >
-        <div className="max-w-2xl">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px w-8 bg-accent" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-zinc-600">Overview / {new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</span>
+        <div className="max-w-3xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-gradient-to-r from-accent to-accent/30" />
+            <span className="text-caption font-mono uppercase tracking-[0.4em] text-accent/90 font-medium">Mission_Briefing // {new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-white leading-[0.9] tracking-tighter">
+          <h1 className="text-hero font-display font-extrabold text-white leading-[0.88] tracking-[-0.04em] uppercase">
             {getGreeting()},<br />
-            <span className="text-accent">{firstName}.</span>
+            <span className="text-white/35 font-medium">{firstName}.</span>
           </h1>
-          <p className="mt-6 text-base text-zinc-500 max-w-md font-sans">
-            Your creative initiatives are scaling. Currently monitoring {stats.active} active trajectories.
+          <p className="mt-8 text-base md:text-lg text-zinc-500 max-w-xl font-body leading-relaxed tracking-tight">
+            Your creative initiatives are scaling. <span className="text-zinc-400 font-medium">Monitoring {stats.active} active trajectories</span> across the Ardeno grid.
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden md:block">
-            <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Global Status</div>
-            <div className="text-xs text-white uppercase font-bold tracking-widest mt-1">Systems Nominal</div>
-          </div>
-          <Link to="/projects/new" className="group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-accent blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
-              <div className="relative flex items-center gap-3 bg-accent text-white px-8 py-4 font-display font-bold uppercase tracking-widest text-[11px] overflow-hidden">
-                <Plus size={16} />
-                Initialize Project
+        <div className="flex flex-col items-start md:items-end gap-6">
+            <div className="text-right hidden md:block">
+            <div className="text-caption font-mono text-zinc-600 uppercase tracking-[0.3em] mb-2">Network_Status</div>
+            <div className="flex items-center justify-end gap-3 px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] rounded-md">
+              <div className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-40"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]"></span>
               </div>
+              <div className="text-caption text-white uppercase font-semibold tracking-[0.25em] font-mono">Systems Nominal</div>
             </div>
+          </div>
+          <Link to="/projects/new">
+            <Button size="lg" className="w-full md:w-auto h-16 px-10">
+              <Plus size={18} />
+              Initialize Project
+            </Button>
           </Link>
         </div>
       </motion.div>
@@ -125,30 +152,40 @@ export default function DashboardPage() {
         className="grid grid-cols-1 md:grid-cols-12 gap-1 mb-16"
       >
         <motion.div variants={stagger.item} className="md:col-span-5">
-          <GlassCard accentTop className="p-10 h-full">
-            <div className="space-y-6">
+          <GlassCard accentTop className="p-10 h-full relative overflow-hidden group">
+            <div className="absolute inset-0 shimmer-bg animate-shimmer opacity-[0.03] pointer-events-none" />
+            <div className="space-y-6 relative z-10">
               <div className="flex items-center gap-2">
-                <FolderKanban size={14} className="text-accent" />
-                <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-[0.3em]">Active.Trajectories</span>
+                <FolderKanban size={14} className="text-accent-tier-1" />
+                <div className="flex flex-col">
+                  <span className="text-caption font-mono text-zinc-500 uppercase tracking-[0.35em] font-medium">Active.Trajectories</span>
+                  <div className="card-title-underline" />
+                </div>
               </div>
               <div className="flex items-baseline gap-4">
-                <span className="text-7xl font-display font-black text-white">{stats.active}</span>
-                <span className="text-xs text-zinc-600 uppercase font-bold tracking-widest whitespace-nowrap">Projects in flight</span>
+                <span className="text-6xl md:text-7xl font-display font-extrabold text-white tracking-tight">
+                  <CountUp value={stats.active} />
+                </span>
+                <span className="text-caption text-zinc-500 uppercase font-medium tracking-[0.2em] whitespace-nowrap">Projects in flight</span>
               </div>
             </div>
           </GlassCard>
         </motion.div>
 
         <motion.div variants={stagger.item} className="md:col-span-4">
-          <GlassCard className="p-10 h-full border-l-0 md:border-l border-white/[0.08]">
-            <div className="space-y-6">
+          <GlassCard className="p-10 h-full border-l-0 md:border-l border-white/[0.08] relative overflow-hidden group">
+            <div className="absolute inset-0 shimmer-bg animate-shimmer opacity-[0.03] pointer-events-none" />
+            <div className="space-y-6 relative z-10">
               <div className="flex items-center gap-2">
                 <Zap size={14} className="text-zinc-500" />
-                <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-[0.3em]">Peak.Stage</span>
+                <div className="flex flex-col">
+                  <span className="text-caption font-mono text-zinc-500 uppercase tracking-[0.35em] font-medium">Peak.Stage</span>
+                  <div className="card-title-underline" />
+                </div>
               </div>
               <div className="pt-2">
                 <StageBadge stage={stats.currentStage} />
-                <p className="mt-4 text-[10px] text-zinc-600 leading-relaxed font-mono italic">
+                <p className="mt-4 text-caption text-zinc-500 leading-relaxed font-mono italic">
                   Level {STAGE_INDEX[stats.currentStage] + 1} integration reached.
                 </p>
               </div>
@@ -157,18 +194,24 @@ export default function DashboardPage() {
         </motion.div>
 
         <motion.div variants={stagger.item} className="md:col-span-3">
-          <GlassCard className="p-10 h-full border-l-0 md:border-l border-white/[0.08]">
-            <div className="space-y-6">
+          <GlassCard className="p-10 h-full border-l-0 md:border-l border-white/[0.08] relative overflow-hidden group">
+            <div className="absolute inset-0 shimmer-bg animate-shimmer opacity-[0.03] pointer-events-none" />
+            <div className="space-y-6 relative z-10">
               <div className="flex items-center gap-2">
                 <CalendarCheck size={14} className="text-zinc-500" />
-                <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-[0.3em]">Critical.Days</span>
+                <div className="flex flex-col">
+                  <span className="text-caption font-mono text-zinc-500 uppercase tracking-[0.35em] font-medium">Critical.Days</span>
+                  <div className="card-title-underline" />
+                </div>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="text-6xl font-display font-medium text-white">{stats.daysUntil !== null ? stats.daysUntil : '--'}</span>
-                <span className="text-[10px] text-zinc-600 uppercase font-bold tracking-widest">Days</span>
+                <span className="text-6xl font-display font-medium text-white">
+                  {stats.daysUntil !== null ? <CountUp value={stats.daysUntil} /> : '--'}
+                </span>
+                <span className="text-caption text-zinc-500 uppercase font-medium tracking-[0.2em]">Days</span>
               </div>
               <div className="h-[2px] w-full bg-white/[0.05] relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 bg-accent w-1/3" />
+                <div className="absolute left-0 top-0 bottom-0 bg-accent-tier-1 w-1/3" />
               </div>
             </div>
           </GlassCard>
@@ -181,15 +224,15 @@ export default function DashboardPage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.5 }}
       >
-        <div className="flex items-end justify-between mb-10 pb-4 border-b border-white/[0.05]">
-          <div className="flex items-center gap-4">
-            <h2 className="text-sm font-mono font-bold uppercase tracking-[0.4em] text-white">
+        <div className="flex items-center justify-between mb-12 pb-6 border-b border-white/[0.08]">
+          <div className="flex items-center gap-6">
+            <h2 className="text-title font-display font-extrabold uppercase tracking-[0.15em] text-white">
               Project Archive
             </h2>
-            <div className="text-[10px] font-mono text-zinc-600">[{stats.total} total_items]</div>
+            <div className="text-caption font-mono text-zinc-500 bg-white/[0.03] px-3 py-1.5 border border-white/[0.06] rounded">[{stats.total} total_items]</div>
           </div>
-          <div className="text-[10px] font-mono text-zinc-700 uppercase tracking-widest hidden sm:block">
-            Sort: Chronological / DESC
+          <div className="text-caption font-mono text-zinc-500 uppercase tracking-[0.25em] hidden sm:block">
+            Sort: Chronological // 0xDESC
           </div>
         </div>
 
@@ -200,11 +243,13 @@ export default function DashboardPage() {
             variants={stagger.container}
             initial="initial"
             animate="animate"
-            className="grid grid-cols-1 gap-px bg-white/[0.05] border border-white/[0.05]"
+            className="grid grid-cols-1 gap-px bg-white/[0.05] border border-white/[0.05] relative overflow-hidden"
           >
+            <div className="absolute inset-0 industrial-grid opacity-40 pointer-events-none" />
             {projectList.map((project) => (
-              <motion.div key={project.id} variants={stagger.item}>
+              <motion.div key={project.id} variants={stagger.item} className="relative z-10 transition-colors hover:bg-white/[0.02]">
                 <ProjectCard project={project} />
+                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-accent scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top" />
               </motion.div>
             ))}
           </motion.div>
@@ -226,29 +271,29 @@ function ProjectCard({ project }: { project: Project }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 mb-3">
               {project.industry && (
-                <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-zinc-600">
+                <span className="text-caption font-medium uppercase tracking-[0.2em] text-zinc-500">
                   {project.industry}
                 </span>
               )}
             </div>
-            <h3 className="text-base font-display font-semibold text-white group-hover:text-accent transition-colors duration-300 truncate">
+            <h3 className="text-base font-display font-semibold text-white tracking-tight group-hover:text-accent-tier-1 transition-colors duration-300 truncate">
               {project.project_name}
             </h3>
           </div>
-          <div className="rounded-full border border-white/[0.06] p-2 text-zinc-600 group-hover:border-accent/20 group-hover:text-accent transition-all duration-300">
+          <div className="rounded-full border border-white/[0.06] p-2 text-zinc-600 group-hover:border-accent-tier-1/20 group-hover:text-accent-tier-1 transition-all duration-300">
             <ArrowUpRight size={14} />
           </div>
         </div>
 
         {/* Stage progress dots */}
-        <div className="mt-5 flex items-center gap-1.5">
+        <div className="mt-5 flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
           {PROJECT_STAGES.map((stage, idx) => (
             <div key={stage} className="flex items-center gap-1.5">
               <div
                 className={`h-1.5 rounded-full transition-all duration-500 ${idx < stageIdx
-                  ? 'w-8 bg-accent/60'
+                  ? 'w-8 bg-accent-tier-3/60'
                   : idx === stageIdx
-                    ? 'w-10 bg-accent'
+                    ? 'w-10 bg-accent-tier-1 shadow-[0_0_10px_rgba(255,51,1,0.3)]'
                     : 'w-6 bg-white/[0.08]'
                   }`}
               />
@@ -262,7 +307,7 @@ function ProjectCard({ project }: { project: Project }) {
             <StageBadge stage={project.current_stage} />
             <StatusBadge status={project.current_status} />
           </div>
-          <span className="text-[11px] text-zinc-600">
+          <span className="text-caption text-zinc-500">
             {formatRelative(project.updated_at)}
           </span>
         </div>
@@ -282,10 +327,10 @@ function EmptyState() {
           <Sparkles size={24} className="text-zinc-500" />
         </div>
       </div>
-      <h3 className="text-base font-display font-semibold text-white">
+      <h3 className="text-title font-display font-semibold text-white tracking-tight">
         No active projects yet
       </h3>
-      <p className="mt-2 text-sm text-zinc-500 max-w-xs">
+      <p className="mt-2 text-sm font-body text-zinc-500 max-w-xs leading-relaxed">
         Let&apos;s build something iconic. Start a project and watch it come to life.
       </p>
       <Link

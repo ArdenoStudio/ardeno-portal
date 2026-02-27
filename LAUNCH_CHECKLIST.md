@@ -3,9 +3,10 @@
 ## 1. Production Environment Setup
 
 ### Supabase Dashboard
-- [ ] **Redirect URLs**: Only your Netlify domain + `http://localhost:5173` are allowed
-  - `https://ardenostudio.netlify.app/auth/callback`
-  - `http://localhost:5173/auth/callback`
+- [ ] **Redirect URLs**: Add your Netlify domain + localhost URLs
+  - `https://ardenostudio.netlify.app/auth/callback` (production)
+  - `http://localhost:8888/auth/callback` (netlify dev)
+  - `http://localhost:5174/auth/callback` (plain Vite dev)
 - [ ] **Session duration**: Set to your preference (default: 1 week)
 - [ ] **Remove** any old/test redirect URLs
 

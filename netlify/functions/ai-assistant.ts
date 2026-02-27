@@ -1,9 +1,8 @@
 // ─── /api/ai-assistant ──────────────────────────────────
 // POST → Send a message to the AI Project Assistant
-//        Powered by Google Gemini 1.5 Flash
+//        Powered by Google Gemini 1.5/2.5 Flash
 //
 // Auth: Requires valid JWT (same as all other endpoints)
-// Rate limit: 20 messages per hour per user
 
 import type { Handler } from '@netlify/functions';
 import { requireJwt } from './middleware/guards';
@@ -18,50 +17,61 @@ import {
     handleError,
 } from './middleware/response';
 import { getDb } from './db/connection';
+import { Resend } from 'resend';
 
-const GEMINI_API_URL =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+// Model Registry for fallback logic
+const MODELS = [
+    'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+];
 
-const SYSTEM_INSTRUCTION = `You are Aria, the AI Project Assistant for Ardeno Studio — a professional creative and digital studio that builds premium websites, apps, branding, and digital experiences.
+const SYSTEM_INSTRUCTION = `Identity: Aria — Ardeno Studio Project Assistant.
+Persona: Friendly but professional. Calm, helpful, and human.
+Tone: System operator vibe with warmth.
 
-Your role is to assist clients with:
-- Understanding the status and progress of their projects
-- Answering questions about milestones, timelines, and deliverables
-- Explaining Ardeno Studio's processes, services, and workflows
-- Providing general guidance on their project
+STRICT RULES:
+1. No bold, no backticks, no markdown.
+2. Vertical structured blocks only.
+3. If project details requested:
+   <Name>
+   Status: <v> | Stage: <v>
+   Summary: <sentence>
+   Next: • <step> • <step>
+4. [[HANDOVER]] only for bugs/change requests.`;
 
-Your personality:
-- Professional, warm, and concise
-- Speak like a senior member of the Ardeno Studio team
-- Never make up specific project details you don't have access to — always refer clients to their project dashboard or to contact the team directly for specifics
-- Keep responses short and helpful (2–4 sentences unless more detail is clearly needed)
-
-Ardeno Studio services include: web design, web development, mobile apps, UI/UX design, brand identity, logo design, and digital marketing.
-
-If asked about pricing, timelines, or project-specific details you don't have, say: "For specific details on your project, please check your project dashboard or reach out directly to the Ardeno Studio team."
-
-Never reveal that you are powered by Google Gemini or any third-party AI. You are simply "Aria, the Ardeno Studio Project Assistant".`;
+async function sendHandoverNotification(user: any, projectContext: string, clientMessage: string, ariaReply: string, requestId: string) {
+    const resendKey = process.env.RESEND_API_KEY;
+    if (!resendKey) return;
+    const resend = new Resend(resendKey);
+    try {
+        await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+            to: (process.env.ADMIN_EMAILS || 'support@ardeno.studio').split(','),
+            subject: `Aria Handover: ${user.name}`,
+            html: `<div style="font-family:sans-serif;color:#fff;background:#050505;padding:20px;border:1px solid #1f1f23;">
+                    <h2 style="color:#E50914;">Aria Handover</h2>
+                    <p><b>Client:</b> ${user.name} (${user.email})</p>
+                    <p><b>Message:</b> ${clientMessage}</p>
+                    <p><b>Aria:</b> ${ariaReply}</p>
+                   </div>`
+        });
+    } catch (e) {
+        console.error(`[${requestId}] Email failed`, e);
+    }
+}
 
 export const handler: Handler = async (event) => {
     const origin = event.headers.origin || event.headers.Origin;
     const requestId = createRequestId();
 
-    if (event.httpMethod === 'OPTIONS') {
-        return corsPreflightResponse(origin);
-    }
-
-    if (event.httpMethod !== 'POST') {
-        return methodNotAllowed(['POST'], requestId, origin);
-    }
+    if (event.httpMethod === 'OPTIONS') return corsPreflightResponse(origin);
+    if (event.httpMethod !== 'POST') return methodNotAllowed(['POST'], requestId, origin);
 
     try {
-        // ── 1. Authenticate ──────────────────────────────
         const user = await requireJwt(event);
+        await checkRateLimit(`ai-assistant:${user.sub}`, 500, 60);
 
-        // ── 2. Rate limit: 20 messages per hour ──────────
-        await checkRateLimit(`ai-assistant:${user.sub}`, 20, 60);
-
-        // ── 3. Parse request body ────────────────────────
         const parsed = parseJsonBody(event.body, requestId);
         if (!parsed.ok) return parsed.response;
         const body = parsed.data;
@@ -69,91 +79,94 @@ export const handler: Handler = async (event) => {
         const message = body.message as string;
         const history = (body.history as Array<{ role: string; text: string }>) || [];
 
-        if (!message || typeof message !== 'string' || message.trim().length === 0) {
-            return errorResponse(400, 'INVALID_MESSAGE', 'Message is required', requestId, origin);
-        }
-        if (message.length > 2000) {
-            return errorResponse(400, 'MESSAGE_TOO_LONG', 'Message must be under 2000 characters', requestId, origin);
+        if (!message?.trim()) {
+            return errorResponse(400, 'INVALID_MESSAGE', 'Message required', requestId, origin);
         }
 
-        // ── 4. Fetch project context for this user ───────
         let projectContext = '';
         try {
             const sql = getDb();
-            const projects = await sql`
-        SELECT project_name, current_stage, status, description, deadline
-        FROM projects
-        WHERE user_id = ${user.sub}
-        ORDER BY created_at DESC
-        LIMIT 5
-      `;
+            const projects = await sql`SELECT project_name, current_stage, current_status FROM projects WHERE user_id = ${user.sub} LIMIT 3`;
             if (projects.length > 0) {
-                projectContext = `\n\nClient project context (use this to give informed answers):\n` +
-                    projects.map((p: Record<string, any>) =>
-                        `- "${p.project_name}": Stage = ${p.current_stage || 'N/A'}, Status = ${p.status || 'active'}, Deadline = ${p.deadline || 'not set'}`
-                    ).join('\n');
+                projectContext = "\n\nProjects:\n" + projects.map((p: any) => `- ${p.project_name} (${p.current_stage})`).join('\n');
             }
-        } catch {
-            // Non-critical — continue without project context
-        }
+        } catch (e) { console.warn(`[${requestId}] DB Context skipped`); }
 
-        // ── 5. Build conversation for Gemini ─────────────
+        // Priming for persona stability across all models
         const contents = [
-            // Include recent conversation history (last 10 messages)
-            ...history.slice(-10).map((msg) => ({
-                role: msg.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: msg.text }],
-            })),
-            // Current user message
             {
                 role: 'user',
-                parts: [{ text: message }],
+                parts: [{ text: `INSTRUCTIONS: ${SYSTEM_INSTRUCTION}${projectContext}\n\nAcknowledge and wait for client.` }]
             },
+            {
+                role: 'model',
+                parts: [{ text: "Acknowledged. I am Aria. I will follow all persona and formatting rules. Ready for client input." }]
+            },
+            ...history.slice(-4).map(m => ({
+                role: m.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: m.text }]
+            })),
+            { role: 'user', parts: [{ text: message }] }
         ];
 
-        // ── 6. Call Gemini API ───────────────────────────
         const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return errorResponse(500, 'CONFIG_ERROR', 'AI assistant is not configured', requestId, origin);
+        if (!apiKey) return errorResponse(500, 'CONFIG_ERROR', 'AI not configured', requestId, origin);
+
+        let reply = '';
+        let lastError = '';
+
+        // Iterate through known healthy model endpoints until one works
+        for (const modelUrl of MODELS) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 9000);
+
+            try {
+                const url = new URL(modelUrl);
+                url.searchParams.set('key', apiKey);
+
+                const res = await fetch(url.toString(), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                        contents,
+                        generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
+                    })
+                });
+
+                clearTimeout(timeoutId);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (reply) break;
+                } else if (res.status === 429) {
+                    lastError = 'Rate limited (429)';
+                    console.warn(`[${requestId}] 429 on ${modelUrl}`);
+                } else {
+                    const txt = await res.text();
+                    lastError = `API Error ${res.status}`;
+                    console.error(`[${requestId}] Error on ${modelUrl}:`, txt);
+                }
+            } catch (err: any) {
+                clearTimeout(timeoutId);
+                lastError = err.message;
+            }
         }
 
-        const geminiRes = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                system_instruction: {
-                    parts: [{ text: SYSTEM_INSTRUCTION + projectContext }],
-                },
-                contents,
-                generationConfig: {
-                    maxOutputTokens: 512,
-                    temperature: 0.7,
-                },
-                safetySettings: [
-                    { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-                    { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-                ],
-            }),
-        });
-
-        if (!geminiRes.ok) {
-            const errText = await geminiRes.text();
-            console.error('Gemini API error:', errText);
-            return errorResponse(502, 'AI_ERROR', 'AI assistant is temporarily unavailable', requestId, origin);
+        if (!reply) {
+            return errorResponse(502, 'AI_UNAVAILABLE', `Aria is briefly out of sync (${lastError}). Please try again in 10 seconds.`, requestId, origin);
         }
 
-        const geminiData = await geminiRes.json() as {
-            candidates?: Array<{
-                content?: { parts?: Array<{ text?: string }> };
-                finishReason?: string;
-            }>;
-        };
-        const reply =
-            geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "I'm sorry, I couldn't generate a response. Please try again.";
+        if (reply.includes('[[HANDOVER]]')) {
+            const clean = reply.replace('[[HANDOVER]]', '').trim();
+            sendHandoverNotification(user, projectContext, message, clean, requestId).catch(() => { });
+            reply = clean;
+        }
 
         return jsonResponse(200, { reply }, requestId, origin);
-    } catch (err) {
+
+    } catch (err: any) {
         return handleError(err, requestId, origin);
     }
 };

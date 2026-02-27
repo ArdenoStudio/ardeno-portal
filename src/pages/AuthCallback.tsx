@@ -16,61 +16,67 @@ export default function AuthCallback() {
 
   useEffect(() => {
     async function handleCallback() {
-      // Check for OAuth error in URL params
-      const errorDesc =
-        params.get('error_description') ||
-        new URLSearchParams(window.location.hash.slice(1)).get(
-          'error_description'
-        );
+      try {
+        // Check for OAuth error in URL params
+        const errorDesc =
+          params.get('error_description') ||
+          new URLSearchParams(window.location.hash.slice(1)).get(
+            'error_description'
+          );
 
-      if (errorDesc) {
-        console.error('[AuthCallback] OAuth error detected:', errorDesc);
-        setError(errorDesc);
-        return;
-      }
-
-      console.log('[AuthCallback] Attempting to retrieve session...');
-      // Try to get session — Supabase auto-handles code exchange on init
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError) {
-        console.error('[AuthCallback] Session retrieval error:', sessionError);
-        setError(sessionError.message);
-        return;
-      }
-
-      if (session) {
-        console.log('[AuthCallback] Session found, navigating to destination');
-        const next = params.get('next') || '/dashboard';
-        navigate(next, { replace: true });
-        return;
-      }
-
-      // Fallback: explicit PKCE code exchange
-      const code = params.get('code');
-      if (code) {
-        console.log('[AuthCallback] No session, attempting explicit code exchange...');
-        const { error: exchangeError } =
-          await supabase.auth.exchangeCodeForSession(code);
-
-        if (exchangeError) {
-          console.error('[AuthCallback] Code exchange failed:', exchangeError);
-          setError(exchangeError.message);
+        if (errorDesc) {
+          console.error('[AuthCallback] OAuth error detected:', errorDesc);
+          setError(errorDesc);
           return;
         }
 
-        console.log('[AuthCallback] Code exchange success, redirecting...');
-        const next = params.get('next') || '/dashboard';
-        navigate(next, { replace: true });
-        return;
-      }
+        console.log('[AuthCallback] Attempting to retrieve session...');
+        // Try to get session — Supabase auto-handles code exchange on init
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-      // No session and no code — redirect to login
-      console.warn('[AuthCallback] No session and no PKCE code found. Redirecting to login.');
-      navigate('/login', { replace: true });
+        if (sessionError) {
+          console.error('[AuthCallback] Session retrieval error:', sessionError);
+          setError(sessionError.message);
+          return;
+        }
+
+        if (session) {
+          console.log('[AuthCallback] Session found, navigating to destination');
+          const next = params.get('next') || '/dashboard';
+          navigate(next, { replace: true });
+          return;
+        }
+
+        // Fallback: explicit PKCE code exchange
+        const code = params.get('code');
+        if (code) {
+          console.log('[AuthCallback] No session, attempting explicit code exchange...');
+          const { error: exchangeError } =
+            await supabase.auth.exchangeCodeForSession(code);
+
+          if (exchangeError) {
+            console.error('[AuthCallback] Code exchange failed:', exchangeError);
+            setError(exchangeError.message);
+            return;
+          }
+
+          console.log('[AuthCallback] Code exchange success, redirecting...');
+          const next = params.get('next') || '/dashboard';
+          navigate(next, { replace: true });
+          return;
+        }
+
+        // No session and no code — redirect to login
+        console.warn('[AuthCallback] No session and no PKCE code found. Redirecting to login.');
+        navigate('/login', { replace: true });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('[AuthCallback] Unhandled error:', err);
+        setError(msg);
+      }
     }
 
     handleCallback();

@@ -1,0 +1,45 @@
+:root {
+    /* ── Colors ────────────────────────────────────────────── */
+    --bg-0: #000000;
+    --bg-1: #050505;
+    --bg-2: #0a0a0c;
+
+    --text-0: #f2f2f2;
+    --text-1: #b3b3b3;
+    --text-2: #7a7a7a;
+
+    --border-0: rgba(255, 255, 255, 0.1);
+    --border-1: rgba(255, 255, 255, 0.15);
+
+    --accent-0: #ff3301;
+    --accent-1: #d72600;
+    --accent-veil: rgba(255, 51, 1, 0.12);
+
+    --success: #10b981;
+
+    /* ── Radii ─────────────────────────────────────────────── */
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 12px;
+    --r-pill: 9999px;
+
+    /* ── Shadows & Glows ───────────────────────────────────── */
+    --shadow-1: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    --glow-accent: 0 0 20px -5px rgba(255, 51, 1, 0.3);
+    --accent-glow: rgba(255, 51, 1, 0.4);
+
+    /* ── Typography (Awwards-grade) ────────────────────────── */
+    --font-display: 'Cabinet Grotesk', 'Syne', sans-serif;
+    --font-body: 'Satoshi', 'Manrope', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+    /* Fluid type scale */
+    --text-hero: clamp(3rem, 8vw + 2rem, 7rem);
+    --text-display: clamp(2rem, 4vw + 1rem, 4rem);
+    --text-title: clamp(1.125rem, 1.5vw + 0.75rem, 1.5rem);
+    --text-body: clamp(0.875rem, 0.5vw + 0.75rem, 1rem);
+    --text-caption: clamp(0.6875rem, 0.25vw + 0.625rem, 0.75rem);
+
+    /* ── Motion ────────────────────────────────────────────── */
+    --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+}

@@ -107,7 +107,7 @@ export const handler: Handler = async (event) => {
         html: `
           <div style="font-family: 'Helvetica Neue', -apple-system, sans-serif; background: #0a0a0c; color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto;">
             <!-- Header -->
-            <div style="border-bottom: 1px solid rgba(255,51,1,0.3); padding-bottom: 20px; margin-bottom: 28px;">
+            <div style="border-bottom: 1px solid rgba(229,9,20,0.3); padding-bottom: 20px; margin-bottom: 28px;">
               <h1 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 0.25em; color: #fff;">ARDENO</h1>
               <p style="margin: 4px 0 0; font-size: 10px; letter-spacing: 0.35em; color: #52525b; text-transform: uppercase;">Admin Notification</p>
             </div>
@@ -130,8 +130,8 @@ export const handler: Handler = async (event) => {
             </div>
 
             <!-- Message Card -->
-            <div style="background: rgba(255,51,1,0.05); border: 1px solid rgba(255,51,1,0.2); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
-              <p style="color: #ff3301; margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;">Client Message</p>
+            <div style="background: rgba(229,9,20,0.05); border: 1px solid rgba(229,9,20,0.2); border-radius: 12px; padding: 24px; margin-bottom: 32px;">
+              <p style="color: #E50914; margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;">Client Message</p>
               <p style="color: #e4e4e7; margin: 0; font-size: 14px; line-height: 1.7;">
                 ${message}
               </p>
@@ -139,7 +139,7 @@ export const handler: Handler = async (event) => {
 
             <!-- CTA -->
             <div>
-              <a href="${portalUrl}/projects/${projectId}" style="display: inline-block; background: #ff3301; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 999px; font-size: 13px; font-weight: 600;">
+              <a href="${portalUrl}/projects/${projectId}" style="display: inline-block; background: #E50914; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 999px; font-size: 13px; font-weight: 600;">
                 Respond in Portal
               </a>
             </div>

@@ -1,8 +1,9 @@
+@import './styles/tokens.css';
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /* ── Custom scrollbar (Industrial) ───────────────────────── */
 ::-webkit-scrollbar {
@@ -38,20 +39,62 @@
 
 /* ── Body base ──────────────────────────────────────────── */
 body {
-  background-color: #000000;
-  color: #a1a1aa;
+  background-color: var(--bg-0);
+  color: var(--text-1);
   overflow-x: hidden;
+  font-family: var(--font-body);
 }
 
-/* ── Typography Scale ───────────────────────────────────── */
+.portal-root {
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--bg-0);
+}
+
+/* Cinematic Vignette & Haze */
+.portal-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%,
+      transparent 0%,
+      rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.portal-root::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% -10%,
+      rgba(255, 51, 1, 0.03) 0%,
+      transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Typography Scale (Awwards-grade) ───────────────────── */
 h1,
 h2,
 h3,
 h4,
 .font-display {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: -0.02em;
-  color: #fff;
+  color: var(--text-0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+.font-body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
 }
 
 /* ── High-Inertia Reveal (Phase 6B) ──────────────────────── */
@@ -71,16 +114,56 @@ h4,
   animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ── Shimmer utility ─────────────────────────────────────── */
+.shimmer-bg {
+  background: linear-gradient(90deg,
+      rgba(255, 51, 1, 0) 0%,
+      rgba(255, 51, 1, 0.03) 50%,
+      rgba(255, 51, 1, 0) 100%);
+  background-size: 200% 100%;
+}
+
+/* ── Industrial Grid ─────────────────────────────────────── */
+.industrial-grid {
+  background-image:
+    linear-gradient(rgba(255, 51, 1, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 51, 1, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Card Title Underline ─────────────────────────────────── */
+.card-title-underline {
+  @apply h-[1px] bg-accent w-0 transition-all duration-300 ease-out;
+}
+
+.glass-card:hover .card-title-underline {
+  @apply w-10;
+}
+
 /* ── Glass card (Refined) ─────────────────────────────────── */
 .glass-card {
-  background: rgba(10, 10, 12, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  /* Sharper border */
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  @apply bg-surface-card border border-white/[0.08] backdrop-blur-3xl;
+  transition: all 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .glass-card:hover {
-  background: rgba(15, 15, 18, 0.65);
-  border-color: rgba(255, 255, 255, 0.12);
+  @apply bg-surface-card-hover border-white/[0.12];
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px -10px rgba(255, 51, 1, 0.05);
+}
+
+/* ── Aria AI Assistant Refinement ────────────────────────── */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.aria-glass {
+  background: rgba(5, 5, 5, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
