@@ -43,7 +43,13 @@ export const handler: Handler = async (event) => {
     const user = await requireJwt(event);
     const sql = getDb();
 
-    const projectId = event.queryStringParameters?.id;
+    // Query param is set by the redirect rule (?id=:projectId).
+    // Fall back to extracting the last path segment in case Netlify
+    // doesn't inject the redirect query param into queryStringParameters.
+    const projectId =
+      event.queryStringParameters?.id ||
+      event.path?.split('/').filter(Boolean).pop();
+
     if (!projectId) {
       return errorResponse(400, 'MISSING_PARAM', 'Missing project id', requestId, origin);
     }
