@@ -10,12 +10,12 @@ export function PortalLayout() {
   const location = useLocation();
 
   return (
-    <div className="portal-root flex h-screen bg-black overflow-hidden select-none">
+    <div className="portal-root flex h-screen overflow-hidden select-none">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="relative z-10 flex flex-1 flex-col lg:ml-[260px] bg-transparent">
         {/* Mobile topbar */}
-        <div className="flex items-center justify-between px-4 py-3 lg:hidden border-b border-white/[0.06]">
+        <div className="flex items-center justify-between px-4 py-3 lg:hidden border-b border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
           <button
             onClick={() => setSidebarOpen(true)}
             className="rounded-xl p-2 text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors"
@@ -23,7 +23,7 @@ export function PortalLayout() {
             <Menu size={20} />
           </button>
           <div className="text-sm font-display font-semibold tracking-[0.2em] text-white">
-            ARDENO
+            Ardeno
           </div>
           <div className="w-9" />
         </div>

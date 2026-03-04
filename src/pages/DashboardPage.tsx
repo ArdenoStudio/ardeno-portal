@@ -112,27 +112,29 @@ export default function DashboardPage() {
       >
         <div className="max-w-3xl">
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-px w-12 bg-gradient-to-r from-accent to-accent/30" />
-            <span className="text-caption font-mono uppercase tracking-[0.4em] text-accent/90 font-medium">Mission_Briefing // {new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</span>
+            <div className="h-px w-10 bg-accent/70" />
+            <span className="text-[12px] font-body text-white/55">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: '2-digit' })}
+            </span>
           </div>
-          <h1 className="text-hero font-display font-extrabold text-white leading-[0.88] tracking-[-0.04em] uppercase">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-white leading-[1.02] tracking-[-0.02em]">
             {getGreeting()},<br />
-            <span className="text-white/35 font-medium">{firstName}.</span>
+            <span className="text-white/70">{firstName}.</span>
           </h1>
-          <p className="mt-8 text-base md:text-lg text-zinc-500 max-w-xl font-body leading-relaxed tracking-tight">
-            Your creative initiatives are scaling. <span className="text-zinc-400 font-medium">Monitoring {stats.active} active trajectories</span> across the Ardeno grid.
+          <p className="mt-6 text-base md:text-lg text-white/55 max-w-xl font-body leading-relaxed">
+            A quick overview of your projects, timelines, and what needs attention.
           </p>
         </div>
 
         <div className="flex flex-col items-start md:items-end gap-6">
-            <div className="text-right hidden md:block">
-            <div className="text-caption font-mono text-zinc-600 uppercase tracking-[0.3em] mb-2">Network_Status</div>
-            <div className="flex items-center justify-end gap-3 px-4 py-2.5 bg-white/[0.02] border border-white/[0.06] rounded-md">
+          <div className="text-right hidden md:block">
+            <div className="text-[11px] font-body text-white/45 mb-2">Status</div>
+            <div className="flex items-center justify-end gap-3 px-4 py-2.5 bg-white/[0.02] border border-white/[0.08] rounded-full backdrop-blur-xl">
               <div className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-40"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]"></span>
               </div>
-              <div className="text-caption text-white uppercase font-semibold tracking-[0.25em] font-mono">Systems Nominal</div>
+              <div className="text-[12px] text-white/80 font-body font-medium">All systems normal</div>
             </div>
           </div>
           <Link to="/projects/new">
@@ -149,7 +151,7 @@ export default function DashboardPage() {
         variants={stagger.container}
         initial="initial"
         animate="animate"
-        className="grid grid-cols-1 md:grid-cols-12 gap-1 mb-16"
+        className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-16"
       >
         <motion.div variants={stagger.item} className="md:col-span-5">
           <GlassCard accentTop className="p-10 h-full relative overflow-hidden group">
@@ -158,15 +160,15 @@ export default function DashboardPage() {
               <div className="flex items-center gap-2">
                 <FolderKanban size={14} className="text-accent-tier-1" />
                 <div className="flex flex-col">
-                  <span className="text-caption font-mono text-zinc-500 uppercase tracking-[0.35em] font-medium">Active.Trajectories</span>
+                  <span className="text-[12px] font-body text-white/55">Active projects</span>
                   <div className="card-title-underline" />
                 </div>
               </div>
               <div className="flex items-baseline gap-4">
-                <span className="text-6xl md:text-7xl font-display font-extrabold text-white tracking-tight">
+                <span className="text-6xl md:text-7xl font-display font-semibold text-white tracking-tight">
                   <CountUp value={stats.active} />
                 </span>
-                <span className="text-caption text-zinc-500 uppercase font-medium tracking-[0.2em] whitespace-nowrap">Projects in flight</span>
+                <span className="text-[12px] text-white/50 font-body whitespace-nowrap">in progress</span>
               </div>
             </div>
           </GlassCard>
@@ -179,14 +181,14 @@ export default function DashboardPage() {
               <div className="flex items-center gap-2">
                 <Zap size={14} className="text-zinc-500" />
                 <div className="flex flex-col">
-                  <span className="text-caption font-mono text-zinc-500 uppercase tracking-[0.35em] font-medium">Peak.Stage</span>
+                  <span className="text-[12px] font-body text-white/55">Current stage</span>
                   <div className="card-title-underline" />
                 </div>
               </div>
               <div className="pt-2">
                 <StageBadge stage={stats.currentStage} />
-                <p className="mt-4 text-caption text-zinc-500 leading-relaxed font-mono italic">
-                  Level {STAGE_INDEX[stats.currentStage] + 1} integration reached.
+                <p className="mt-4 text-[12px] text-white/45 leading-relaxed font-body">
+                  Based on your most advanced active project.
                 </p>
               </div>
             </div>
@@ -200,7 +202,7 @@ export default function DashboardPage() {
               <div className="flex items-center gap-2">
                 <CalendarCheck size={14} className="text-zinc-500" />
                 <div className="flex flex-col">
-                  <span className="text-caption font-mono text-zinc-500 uppercase tracking-[0.35em] font-medium">Critical.Days</span>
+                  <span className="text-[12px] font-body text-white/55">Next deadline</span>
                   <div className="card-title-underline" />
                 </div>
               </div>
@@ -208,7 +210,7 @@ export default function DashboardPage() {
                 <span className="text-6xl font-display font-medium text-white">
                   {stats.daysUntil !== null ? <CountUp value={stats.daysUntil} /> : '--'}
                 </span>
-                <span className="text-caption text-zinc-500 uppercase font-medium tracking-[0.2em]">Days</span>
+                <span className="text-[12px] text-white/45 font-body">days</span>
               </div>
               <div className="h-[2px] w-full bg-white/[0.05] relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 bg-accent-tier-1 w-1/3" />

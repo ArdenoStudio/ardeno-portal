@@ -1,19 +1,21 @@
 :root {
     /* ── Colors ────────────────────────────────────────────── */
-    --bg-0: #000000;
-    --bg-1: #050505;
-    --bg-2: #0a0a0c;
+    --bg-0: #070709;
+    --bg-1: #0b0b0f;
+    --bg-2: #11111a;
 
-    --text-0: #f2f2f2;
-    --text-1: #b3b3b3;
-    --text-2: #7a7a7a;
+    --text-0: rgba(255, 255, 255, 0.92);
+    --text-1: rgba(255, 255, 255, 0.72);
+    --text-2: rgba(255, 255, 255, 0.52);
 
-    --border-0: rgba(255, 255, 255, 0.1);
-    --border-1: rgba(255, 255, 255, 0.15);
+    --border-0: rgba(255, 255, 255, 0.08);
+    --border-1: rgba(255, 255, 255, 0.12);
 
-    --accent-0: #ff3301;
-    --accent-1: #d72600;
-    --accent-veil: rgba(255, 51, 1, 0.12);
+    --accent-0: #E50914; /* Ardeno red */
+    --accent-1: #B20710;
+    --accent-veil: rgba(229, 9, 20, 0.14);
+    --accent-grad: linear-gradient(135deg, rgba(229, 9, 20, 1), rgba(229, 9, 20, 0.72));
+    --accent-glow: 0 0 34px rgba(229, 9, 20, 0.20);
 
     --success: #10b981;
 
@@ -24,13 +26,13 @@
     --r-pill: 9999px;
 
     /* ── Shadows & Glows ───────────────────────────────────── */
-    --shadow-1: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
-    --glow-accent: 0 0 20px -5px rgba(255, 51, 1, 0.3);
-    --accent-glow: rgba(255, 51, 1, 0.4);
+    --shadow-1: 0 18px 60px -34px rgba(0, 0, 0, 0.75);
+    --shadow-2: 0 10px 30px -18px rgba(0, 0, 0, 0.75);
+    --glow-accent: 0 0 22px -8px rgba(229, 9, 20, 0.35);
 
     /* ── Typography (Awwards-grade) ────────────────────────── */
-    --font-display: 'Cabinet Grotesk', 'Syne', sans-serif;
-    --font-body: 'Satoshi', 'Manrope', sans-serif;
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
+    --font-body: 'Inter', 'Satoshi', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 
     /* Fluid type scale */
@@ -41,5 +43,5 @@
     --text-caption: clamp(0.6875rem, 0.25vw + 0.625rem, 0.75rem);
 
     /* ── Motion ────────────────────────────────────────────── */
-    --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-cinematic: cubic-bezier(0.2, 1, 0.25, 1);
 }

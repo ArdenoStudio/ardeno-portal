@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { AnimatedArdenoLogo } from "@/components/AnimatedArdenoLogo";
+import { Silk } from "@/components/backgrounds/Silk";
 
 export default function ArdenoLogin() {
   const navigate = useNavigate();
@@ -83,41 +84,64 @@ export default function ArdenoLogin() {
   return (
     <div className="ardeno-root">
       <style>{`
+        html, body, #root {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+        }
+
         .ardeno-root {
-          height: 100vh;
-          width: 100%;
-          background: #080605;
+          height: 100dvh;
+          width: 100vw;
+          background: #070709;
           display: flex;
           align-items: center;
           justify-content: center;
           overflow: hidden;
-          position: relative;
+          position: fixed;
+          inset: 0;
           font-family: 'JetBrains Mono', monospace;
         }
 
-        .ardeno-wrap {
+        .ardeno-card {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 64px;
+          gap: 48px;
           position: relative;
           z-index: 1;
+          width: 100%;
+          max-width: 360px;
+          margin: 0 16px;
+          background: rgba(255,255,255,0.08);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-top-color: rgba(255,255,255,0.25);
+          border-radius: 16px;
+          padding: 56px 32px 48px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+          box-sizing: border-box;
+          opacity: 0;
+          animation: ardenoUp 0.8s cubic-bezier(.16,1,.3,1) 0.1s forwards;
         }
 
         .ardeno-btn {
           display: flex;
           align-items: center;
-          width: 280px;
+          width: 100%;
           height: 52px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-top-color: rgba(255,255,255,0.14);
+          background: rgba(255,255,255,0.12);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255,255,255,0.18);
+          border-top-color: rgba(255,255,255,0.28);
           cursor: pointer;
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          opacity: 0;
-          animation: ardenoUp 1s cubic-bezier(.16,1,.3,1) 0.3s forwards;
           position: relative;
           overflow: hidden;
+          border-radius: 8px;
         }
 
         .ardeno-btn:disabled {
@@ -129,14 +153,15 @@ export default function ArdenoLogin() {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+          background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 60%);
           pointer-events: none;
         }
 
         .ardeno-btn:hover:not(:disabled) {
-          background: rgba(255,255,255,0.07);
-          border-color: rgba(255,255,255,0.16);
+          background: rgba(255,255,255,0.18);
+          border-color: rgba(255,255,255,0.28);
           transform: translateY(-1px);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
 
         .ardeno-btn-icon {
@@ -145,7 +170,7 @@ export default function ArdenoLogin() {
           display: flex;
           align-items: center;
           justify-content: center;
-          border-right: 1px solid rgba(255,255,255,0.06);
+          border-right: 1px solid rgba(255,255,255,0.12);
           flex-shrink: 0;
         }
 
@@ -156,7 +181,7 @@ export default function ArdenoLogin() {
           font-size: 10px;
           letter-spacing: 0.25em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.5);
+          color: rgba(255,255,255,0.9);
           font-weight: 500;
         }
 
@@ -165,8 +190,6 @@ export default function ArdenoLogin() {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          opacity: 0;
-          animation: ardenoUp 1s cubic-bezier(.16,1,.3,1) 0.5s forwards;
           width: 100%;
         }
 
@@ -180,7 +203,7 @@ export default function ArdenoLogin() {
         }
 
         .ardeno-error {
-          margin-top: 16px;
+          margin-top: 8px;
           font-size: 9px;
           text-transform: uppercase;
           letter-spacing: 0.15em;
@@ -193,7 +216,7 @@ export default function ArdenoLogin() {
           font-size: 9px;
           letter-spacing: 0.22em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.15);
+          color: rgba(255,255,255,0.6);
           font-weight: 400;
         }
 
@@ -201,24 +224,25 @@ export default function ArdenoLogin() {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          margin-top: 48px;
           padding: 8px 16px;
           font-size: 9px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: rgba(255,255,255,0.4);
+          color: rgba(255,255,255,0.7);
           text-decoration: none;
-          border: 1px solid rgba(255,255,255,0.08);
-          background: transparent;
+          border: 1px solid rgba(255,255,255,0.15);
+          border-top-color: rgba(255,255,255,0.22);
+          background: rgba(255,255,255,0.06);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border-radius: 6px;
           transition: color 0.2s, border-color 0.2s, background 0.2s;
-          opacity: 0;
-          animation: ardenoUp 1s cubic-bezier(.16,1,.3,1) 0.6s forwards;
         }
 
         .ardeno-back-link:hover {
-          color: rgba(255,255,255,0.8);
-          border-color: rgba(255,255,255,0.15);
-          background: rgba(255,255,255,0.03);
+          color: rgba(255,255,255,0.95);
+          border-color: rgba(255,255,255,0.25);
+          background: rgba(255,255,255,0.1);
         }
 
         @keyframes ardenoPulse {
@@ -233,7 +257,16 @@ export default function ArdenoLogin() {
         }
       `}</style>
 
-      <div className="ardeno-wrap">
+      <Silk
+        speed={5}
+        scale={1}
+        color="#2a2828"
+        noiseIntensity={1.5}
+        rotation={0}
+        style={{ opacity: 0.95 }}
+      />
+
+      <div className="ardeno-card">
         <AnimatedArdenoLogo />
 
         <button className="ardeno-btn" onClick={handleGoogleLogin} disabled={loading}>

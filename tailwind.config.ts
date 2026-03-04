@@ -24,7 +24,7 @@ export default {
         accent: {
           DEFAULT: 'var(--accent-0)',
           'tier-2': 'var(--accent-1)',
-          'tier-3': '#8A1A0F',
+          'tier-3': 'rgba(229, 9, 20, 0.45)',
           glow: 'var(--accent-veil)',
         },
         text: {

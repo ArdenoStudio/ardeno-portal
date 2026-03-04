@@ -72,6 +72,11 @@
   status = 200
 
 [[redirects]]
+  from = "/@react-refresh"
+  to = "/@react-refresh"
+  status = 200
+
+[[redirects]]
   from = "/@id/*"
   to = "/@id/:splat"
   status = 200

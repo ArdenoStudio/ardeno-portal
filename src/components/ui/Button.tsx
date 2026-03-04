@@ -22,11 +22,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const base =
-      'relative inline-flex items-center justify-center gap-2 font-body font-semibold tracking-[0.15em] uppercase transition-all duration-500 rounded-full disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group';
+      'relative inline-flex items-center justify-center gap-2 font-body font-semibold tracking-[0.06em] transition-all duration-500 rounded-full disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group';
 
     const variants = {
       primary:
-        'bg-accent text-white hover:shadow-[var(--glow-accent)] border border-transparent',
+        'text-white border border-white/[0.10] shadow-[var(--shadow-2)]',
       secondary:
         'bg-white/[0.03] text-zinc-300 border border-white/[0.1] hover:bg-white/[0.06] hover:text-white',
       outline:
@@ -58,7 +58,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {/* Ambient Glow Layer for Primary */}
         {variant === 'primary' && (
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          <>
+            <div className="absolute inset-0 bg-accent" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ boxShadow: 'var(--accent-glow)' }} />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          </>
         )}
 
         {loading && (

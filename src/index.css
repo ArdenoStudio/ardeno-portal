@@ -1,5 +1,4 @@
 @import './styles/tokens.css';
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -51,44 +50,46 @@ body {
   background-color: var(--bg-0);
 }
 
-/* Cinematic Vignette & Haze */
+/* Dark minimal + subtle red atmosphere */
 .portal-root::before {
   content: "";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%,
-      transparent 0%,
-      rgba(0, 0, 0, 0.45) 100%);
+  position: absolute;
+  inset: -1px;
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(229, 9, 20, 0.14), transparent 60%),
+    radial-gradient(900px 520px at 90% 20%, rgba(255, 255, 255, 0.05), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 22%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-0));
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
 .portal-root::after {
   content: "";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at 50% -10%,
-      rgba(255, 51, 1, 0.03) 0%,
-      transparent 70%);
+  position: absolute;
+  inset: -1px;
+  background:
+    radial-gradient(900px 700px at 40% 90%, rgba(229, 9, 20, 0.06), transparent 65%),
+    radial-gradient(700px 520px at 70% 75%, rgba(255, 255, 255, 0.03), transparent 60%);
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
-/* ── Typography Scale (Awwards-grade) ───────────────────── */
+/* ── Typography (Serif headings + clean body) ───────────── */
 h1,
 h2,
 h3,
 h4,
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   color: var(--text-0);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .font-display {
-  font-feature-settings: "kern" 1, "liga" 1;
+  font-feature-settings: "kern" 1, "liga" 1, "clig" 1;
 }
 
 .font-body {
