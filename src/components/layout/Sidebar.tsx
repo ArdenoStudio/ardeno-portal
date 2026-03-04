@@ -99,6 +99,30 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             );
           })}
 
+          <a
+            href="https://ardeno-studio-website.netlify.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-body font-medium transition-all duration-300 group text-white/65 hover:text-white hover:bg-white/[0.04] rounded-xl"
+          >
+            <div className="flex items-center justify-center h-4 w-4">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-3.5 h-3.5 text-white/45 group-hover:text-white/70"
+              >
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </div>
+            <span className="tracking-tight">Main Website</span>
+          </a>
+
           {isAdmin && (
             <>
               <div className="pt-6 pb-2 px-5">
@@ -113,8 +137,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     key={item.to}
                     to={item.to}
                     onClick={onClose}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 text-sm font-body font-medium transition-all duration-300 group relative rounded-xl',
+                    className={cn(
+                      'flex items-center gap-3 px-4 py-3 text-sm font-body font-medium transition-all duration-300 group relative rounded-xl',
                       isActive
                         ? 'text-white bg-white/[0.06]'
                         : 'text-white/65 hover:text-white hover:bg-white/[0.04]'
