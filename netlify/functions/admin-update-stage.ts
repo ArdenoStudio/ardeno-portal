@@ -295,7 +295,7 @@ async function sendClientNotification(opts: {
       <!-- Footer -->
       <div style="margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06);">
         <p style="color: #3f3f46; margin: 0; font-size: 11px; letter-spacing: 0.05em;">
-          Ardeno Studio · Secure · Encrypted · Private
+          Ardeno Client · Secure · Encrypted · Private
         </p>
       </div>
     </div>

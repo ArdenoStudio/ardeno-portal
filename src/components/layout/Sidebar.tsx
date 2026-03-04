@@ -48,7 +48,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex items-center justify-between px-7 py-8">
           <div>
             <div className="text-lg font-display font-semibold text-white antialiased">
-              Ardeno Studio
+              Ardeno Client
             </div>
             <div className="text-[12px] font-body text-white/55 mt-1">
               Client Portal

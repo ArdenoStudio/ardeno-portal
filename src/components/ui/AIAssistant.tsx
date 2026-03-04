@@ -14,7 +14,7 @@ export function AIAssistant() {
     const [messages, setMessages] = useState<Message[]>([
         {
             role: 'assistant',
-            text: "Hi! I'm Aria, your Ardeno Studio Project Assistant. How can I help you today?",
+            text: "Hi! I'm Aria, your Ardeno Client Project Assistant. How can I help you today?",
             timestamp: new Date(),
         },
     ]);
@@ -265,13 +265,13 @@ export function AIAssistant() {
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div className={`max-w-[85%] leading-relaxed ${msg.role === 'user'
-                                            ? 'text-[0.85rem] text-white/90 bg-white/[0.03] border border-white/[0.06] px-4 py-3 rounded-[18px]'
-                                            : 'text-[0.88rem] text-[#EAEAEA] font-light leading-7'
+                                        ? 'text-[0.85rem] text-white/90 bg-white/[0.03] border border-white/[0.06] px-4 py-3 rounded-[18px]'
+                                        : 'text-[0.88rem] text-[#EAEAEA] font-light leading-7'
                                         }`}>
                                         {msg.role === 'assistant' && i === 0 ? (
                                             <div className="flex flex-col gap-1">
                                                 <div className="font-bold text-white text-[0.95rem]">Hi! I'm Aria,</div>
-                                                <div className="opacity-80">your Ardeno Studio Project Assistant. How can I help you today?</div>
+                                                <div className="opacity-80">your Ardeno Client Project Assistant. How can I help you today?</div>
                                             </div>
                                         ) : (
                                             msg.text
@@ -323,8 +323,8 @@ export function AIAssistant() {
                                     whileHover={input.trim() ? { scale: 1.05, y: -2 } : {}}
                                     whileTap={input.trim() ? { scale: 0.95 } : {}}
                                     className={`w-11 h-11 rounded-full transition-all duration-500 flex items-center justify-center ${input.trim()
-                                            ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]'
-                                            : 'bg-white/[0.02] text-white/10'
+                                        ? 'bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]'
+                                        : 'bg-white/[0.02] text-white/10'
                                         }`}
                                 >
                                     {isLoading ? (

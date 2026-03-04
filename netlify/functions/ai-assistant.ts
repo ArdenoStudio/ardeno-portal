@@ -26,7 +26,7 @@ const MODELS = [
     'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
 ];
 
-const SYSTEM_INSTRUCTION = `Identity: Aria — Ardeno Studio Project Assistant.
+const SYSTEM_INSTRUCTION = `Identity: Aria — Ardeno Client Project Assistant.
 Persona: Friendly but professional. Calm, helpful, and human.
 Tone: System operator vibe with warmth.
 

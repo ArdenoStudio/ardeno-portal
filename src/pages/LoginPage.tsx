@@ -291,7 +291,7 @@ export default function ArdenoLogin() {
           {error && <span className="ardeno-error">{error}</span>}
 
           <a
-            href={import.meta.env.VITE_WEBSITE_URL || 'https://ardenostudio.com'}
+            href={import.meta.env.VITE_WEBSITE_URL || 'https://ardeno-studio-website.netlify.app'}
             className="ardeno-back-link"
           >
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
